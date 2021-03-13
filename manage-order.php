@@ -140,6 +140,7 @@ class ManagerOrder{
             array( 
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
                 'page_order'=>get_site_url() .'/wp-admin/admin.php?page=mpo_list_order',
+                'page_history'=>get_site_url() .'/wp-admin/admin.php?page=mpo_order_history',
             )
         );  
 	}

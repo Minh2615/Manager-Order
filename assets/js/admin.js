@@ -149,11 +149,10 @@ jQuery(document).ready(function($){
     })
     
     // shorby to fulfil
-    
+
     if(location.search.split('client_id=')[1]){
         jQuery('span.short_day').click(function(){
             var url_string =  new URL(window.location.href);
-
             var val_search = url_string.searchParams.get('val_search');
             var key_search = url_string.searchParams.get('key_search');
 
@@ -520,6 +519,8 @@ jQuery(document).ready(function($){
             var key_search = $('#key_search').find(":selected").val();
 
             var url_string =  new URL(window.location.href);
+            var c_page = url_string.searchParams.get('page');
+
             var client_id = url_string.searchParams.get('client_id');
             var url_short = url_string.searchParams.get('shortby');
             var param_short= location.search.split('shortby=')[1];
@@ -536,12 +537,24 @@ jQuery(document).ready(function($){
             }
             if(param_short){
                 if(url_short == 'DESC'){
-                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=ASC' + param_s_val + param_s_key + param_time;
+                    if(c_page =='mpo_list_order'){
+                        var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=ASC' + param_s_val + param_s_key + param_time;
+                    }else{
+                        var short_order =  mo_localize_script.page_history+'&client_id='+client_id+'&shortby=ASC' + param_s_val + param_s_key + param_time;
+                    }
                 }else{
-                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_key + param_time;
+                    if(c_page =='mpo_list_order'){
+                        var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_key + param_time;
+                    }else{
+                        var short_order =  mo_localize_script.page_history+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_key + param_time;
+                    }
                 }
             }else{
-                var short_order =  mo_localize_script.page_order+'&client_id=' + client_id + param_s_val + param_s_key + param_time;
+                if(c_page =='mpo_list_order'){
+                    var short_order =  mo_localize_script.page_order+'&client_id=' + client_id + param_s_val + param_s_key + param_time;
+                }else{
+                    var short_order =  mo_localize_script.page_history+'&client_id=' + client_id + param_s_val + param_s_key + param_time;
+                }
             }
             window.location.href = short_order;
         });
@@ -550,8 +563,8 @@ jQuery(document).ready(function($){
         jQuery('.btn-search_order').click(function(){
             var val_search = jQuery(this).siblings('input[name="val_search"]').val();
             var key_search = $('#key_search').find(":selected").val();
-
             var url_string =  new URL(window.location.href);
+            var c_page = url_string.searchParams.get('page');
             var param_short= location.search.split('shortby=')[1];
             var url_short = url_string.searchParams.get('shortby');
             var time = url_string.searchParams.get('time');
@@ -570,16 +583,28 @@ jQuery(document).ready(function($){
              
             if(param_short){
                 if(url_short == 'DESC'){
-                    var short_order =  mo_localize_script.page_order+'&shortby=ASC'+param_s_val+param_s_key+param_time;
+                    if(c_page =='mpo_list_order'){
+                        var short_order =  mo_localize_script.page_order+'&shortby=ASC'+param_s_val+param_s_key+param_time;
+                    }else{
+                        var short_order =  mo_localize_script.page_history+'&shortby=ASC'+param_s_val+param_s_key+param_time;
+                    }
+                       
                 }else{
-                    var short_order =  mo_localize_script.page_order+'&shortby=DESC'+param_s_val+param_s_key+param_time;
+                    if(c_page =='mpo_list_order'){
+                        var short_order =  mo_localize_script.page_order+'&shortby=DESC'+param_s_val+param_s_key+param_time;
+                    }else{
+                        var short_order =  mo_localize_script.page_history+'&shortby=DESC'+param_s_val+param_s_key+param_time;
+                    }
                 }
             }
             else{
-                var short_order =  mo_localize_script.page_order+param_s_val + param_s_key + param_time;
+                if(c_page =='mpo_list_order'){
+                    var short_order =  mo_localize_script.page_order+param_s_val + param_s_key + param_time;
+                }else{
+                    var short_order =  mo_localize_script.page_history+param_s_val + param_s_key + param_time;
+                }
             }
             window.location.href = short_order;
         });
     }
-
 });

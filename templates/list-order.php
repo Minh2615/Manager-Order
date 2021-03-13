@@ -27,9 +27,9 @@
             <div class="input-group">
                 <div class="input-group-prepend">
                     <select class="custom_search" id="key_search">
-                        <option value="order_id" selected=""> Order id </option>     
-                        <option value="product_id">Product Id </option> 
-                        <option value="shipping_name"> User Name </option>  
+                        <option value="order_id" <?php echo $_GET['key_search'] == 'order_id' ? 'selected' : '' ; ?>> Order id </option>     
+                        <option value="product_id" <?php echo $_GET['key_search'] == 'product_id' ? 'selected' : '' ; ?>>Product Id </option> 
+                        <option value="shipping_name" <?php echo $_GET['key_search'] == 'shipping_name' ? 'selected' : '' ; ?>> User Name </option>  
                     </select>
                 </div>
                 <input type="text" class="form-control" placeholder="Enter the key..." name="val_search" value="<?php echo $_GET['val_search'] ? $_GET['val_search'] : ''; ?>">
