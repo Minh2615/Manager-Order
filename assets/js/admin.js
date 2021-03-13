@@ -1,7 +1,10 @@
 jQuery(document).ready(function($){
     //tooltip
     $('[data-toggle="tooltip"]').tooltip();
-
+    // ajax send
+    $(document).ajaxSend(function() {
+        $("#overlay").fadeIn(300);　
+    });
     // get code 
     $(document).on('click','.get_code',function(){
         var client_id = $('input[name="client_id"]').val();
@@ -130,7 +133,11 @@ jQuery(document).ready(function($){
                 );
                 console.log(xhr.status);
             },
-        })
+        }).done(function() {
+            setTimeout(function(){
+              $("#overlay").fadeOut(300);
+            },500);
+        });
     
     });
 

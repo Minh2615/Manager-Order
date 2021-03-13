@@ -1,10 +1,10 @@
 
 <div class="container-fluid list_client_id mt-5">
-    <div class="row">
-        <div class="col-6">
+    <div class="row flex-head-order">
+        <div class="col-4">
             <p class="h1"><?php echo __( 'List Order', 'order_sandbox' ); ?></p>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <ul class="nav nav-pills">
                 <li class="nav-item">
                     <a class="nav-link nav-time <?php echo $_GET['time']==0 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=0' ?>">All time</a>
@@ -22,6 +22,19 @@
                     <a class="nav-link nav-time <?php echo $_GET['time']==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Month</a>
                 </li>
             </ul>
+        </div>
+        <div class="col-4">
+            <div class="input-group mt-3 mb-3">
+                <div class="input-group-prepend">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Search By</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Order ID</a>
+                        <a class="dropdown-item" href="#">Customer Name</a>
+                        <a class="dropdown-item" href="#">Product ID</a>
+                    </div>
+                </div>
+                <input type="text" class="form-control" placeholder="Enter the key...">
+            </div> 
         </div>
     </div>
 
