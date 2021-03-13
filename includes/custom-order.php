@@ -27,7 +27,7 @@ class CustomOrder{
     public function show_order_by_token(){
 
         global $wpdb;
-        
+
         $client_id = isset($_GET['client_id']) ? $_GET['client_id'] : '';
 
         $short_by = 'ASC';
@@ -104,8 +104,6 @@ class CustomOrder{
 
             $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order = 'APPROVED' AND {$param_time} {$param_kv} OR status_order IS NULL OR status_order = '' ORDER BY hours_to_fulfill {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
             
-            var_dump($query_data);
-
             $data = $wpdb->get_results($query_data);
 
         }
