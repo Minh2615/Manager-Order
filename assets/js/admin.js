@@ -2,9 +2,7 @@ jQuery(document).ready(function($){
     //tooltip
     $('[data-toggle="tooltip"]').tooltip();
     // ajax send
-    $(document).ajaxSend(function() {
-        $("#overlay").fadeIn(300);　
-    });
+    
     // get code 
     $(document).on('click','.get_code',function(){
         var client_id = $('input[name="client_id"]').val();
@@ -96,7 +94,9 @@ jQuery(document).ready(function($){
     //location.search.split('code=')[1]
     // get list order by token
     $(document).on('click','.get_order',function(){
-
+        $(document).ajaxSend(function() {
+            $("#overlay").fadeIn(300);　
+        });
         var token_id = jQuery(this).closest('tr.row-tk').find('td.token_id').html();
         var client_id = jQuery(this).closest('tr.row-tk').find('td.client_id').html();
        
@@ -153,45 +153,64 @@ jQuery(document).ready(function($){
     if(location.search.split('client_id=')[1]){
         jQuery('span.short_day').click(function(){
             var url_string =  new URL(window.location.href);
+
+            var val_search = url_string.searchParams.get('val_search');
+            var key_search = url_string.searchParams.get('key_search');
+
             var client_id = url_string.searchParams.get('client_id');
             var url_short = url_string.searchParams.get('shortby');
             var param_short= location.search.split('shortby=')[1];
             var time = url_string.searchParams.get('time');
-            var param_time = '';
+            var param_time = '' , param_s_val ='' , param_s_key = '';
             if(time){
                 param_time = '&time='+time;
             }
+            if(val_search){
+                param_s_val = '&val_search='+val_search;
+            }
+            if(key_search){
+                param_s_key = '&key_search='+key_search;
+            }
             if(param_short){
                 if(url_short == 'DESC'){
-                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=ASC'+param_time;
+                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=ASC' + param_s_val + param_s_key + param_time;
                 }else{
-                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC'+param_time;
+                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_key + param_time;
                 }
             }else{
-                var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC'+param_time;
+                var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_ke + param_time;
             }
             window.location.href = short_order;
         });
     }else{
 
         jQuery('span.short_day').click(function(){
+           
             var url_string =  new URL(window.location.href);
+            var val_search = url_string.searchParams.get('val_search');
+            var key_search = url_string.searchParams.get('key_search');
             var param_short= location.search.split('shortby=')[1];
             var url_short = url_string.searchParams.get('shortby');
             var time = url_string.searchParams.get('time');
-            var param_time = '';
+            var param_time = '' , param_s_val ='' , param_s_key = '' ;
             if(time){
                 param_time = '&time='+time;
             }
+            if(val_search){
+                param_s_val = '&val_search='+val_search;
+            }
+            if(key_search){
+                param_s_key = '&key_search='+key_search;
+            }
             if(param_short){
                 if(url_short == 'DESC'){
-                    var short_order =  mo_localize_script.page_order+'&shortby=ASC'+param_time;
+                    var short_order =  mo_localize_script.page_order+'&shortby=ASC'+ param_s_val + param_s_key + param_time;
                 }else{
-                    var short_order =  mo_localize_script.page_order+'&shortby=DESC'+param_time;
+                    var short_order =  mo_localize_script.page_order+'&shortby=DESC'+ param_s_val+ param_s_key + param_time;
                 }
             }
             else{
-                var short_order =  mo_localize_script.page_order+'&shortby=DESC'+param_time;
+                var short_order =  mo_localize_script.page_order+'&shortby=DESC'+ param_s_val+ param_s_key+ param_time;
             }
             window.location.href = short_order;
         });
@@ -492,4 +511,74 @@ jQuery(document).ready(function($){
             focusConfirm: false,
           })
     });
+
+    //seach order
+    if(location.search.split('client_id=')[1]){
+        jQuery('.btn-search_order').click(function(){
+
+            var val_search = jQuery(this).siblings('input[name="val_search"]').val();
+            var key_search = $('#key_search').find(":selected").val();
+
+            var url_string =  new URL(window.location.href);
+            var client_id = url_string.searchParams.get('client_id');
+            var url_short = url_string.searchParams.get('shortby');
+            var param_short= location.search.split('shortby=')[1];
+            var time = url_string.searchParams.get('time');
+            var param_time = '';
+            if(time){
+                param_time = '&time='+time;
+            }
+            if(val_search){
+                param_s_val = '&val_search='+val_search;
+            }
+            if(key_search){
+                param_s_key = '&key_search='+key_search;
+            }
+            if(param_short){
+                if(url_short == 'DESC'){
+                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=ASC' + param_s_val + param_s_key + param_time;
+                }else{
+                    var short_order =  mo_localize_script.page_order+'&client_id='+client_id+'&shortby=DESC' + param_s_val + param_s_key + param_time;
+                }
+            }else{
+                var short_order =  mo_localize_script.page_order+'&client_id=' + client_id + param_s_val + param_s_key + param_time;
+            }
+            window.location.href = short_order;
+        });
+    }else{
+
+        jQuery('.btn-search_order').click(function(){
+            var val_search = jQuery(this).siblings('input[name="val_search"]').val();
+            var key_search = $('#key_search').find(":selected").val();
+
+            var url_string =  new URL(window.location.href);
+            var param_short= location.search.split('shortby=')[1];
+            var url_short = url_string.searchParams.get('shortby');
+            var time = url_string.searchParams.get('time');
+
+            var param_time = '' , param_s_val = '' , param_s_key = '';
+            if(time){
+                param_time = '&time='+time;
+            }
+            if(val_search){
+                param_s_val = '&val_search='+val_search;
+            }
+            if(key_search){
+                param_s_key = '&key_search='+key_search;
+            }
+             
+            if(param_short){
+                if(url_short == 'DESC'){
+                    var short_order =  mo_localize_script.page_order+'&shortby=ASC'+param_s_val+param_s_key+param_time;
+                }else{
+                    var short_order =  mo_localize_script.page_order+'&shortby=DESC'+param_s_val+param_s_key+param_time;
+                }
+            }
+            else{
+                var short_order =  mo_localize_script.page_order+param_s_val + param_s_key + param_time;
+            }
+            window.location.href = short_order;
+        });
+    }
+
 });

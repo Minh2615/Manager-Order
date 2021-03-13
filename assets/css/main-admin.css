@@ -127,3 +127,7 @@ table.tb-confirmed-ship td strong{
   .is-hide{
 	display:none;
   }
+.btn-search_order{
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
