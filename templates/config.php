@@ -1,0 +1,92 @@
+<div class="container mt-5">
+    <div class="input-group mb-3 col-lg-4 mx-auto">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Name App" name="name_app">
+    </div>
+    <div class="input-group mb-3 col-lg-4 mx-auto">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Client ID" name="client_id">
+    </div>
+    <div class="input-group mb-3 col-lg-4 mx-auto">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Client Secret" name="client_secret">
+    </div>
+    <div class="input-group mb-3 col-lg-4 mx-auto">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Redirect URI" name="redirect_uri">
+    </div>
+    <div class="input-group mb-3 col-lg-3 d-flex justify-content-between mx-auto">
+        <button type="button" class="btn btn-primary get_code"><?php echo __( 'Get Code', 'order_sandbox' ); ?></button>
+        <button type="button" class="btn btn-success get_token"><?php echo __( 'Get Token', 'order_sandbox' ); ?></button>
+    </div>
+</div>
+<div class="container-fluid list_client_id mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"><?php echo __( 'ID', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Client ID', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Client Secret', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Access Token', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Actions', 'order_sandbox' ); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php 
+        global $wpdb;
+        if (isset($_GET['pageno'])) {
+            $pageno = $_GET['pageno'];
+        } else {
+            $pageno = 1;
+        }
+        $records_per_page = 50;
+        $admin_url = admin_url().'/admin.php?page=manager_order';
+        $offset = ($pageno-1) * $records_per_page;
+        $total_sql = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_config");
+        $total_pages = ceil($total_sql / $records_per_page);
+        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_config LIMIT %d , %d", $offset , $records_per_page );
+        $rs = $wpdb->get_results($query_data);
+        $i=1;
+        foreach($rs as $value){
+             ?>
+            <tr class="row-tk">
+                <th scope="row"><?php echo $i; ?></th>
+                <th><?php echo $value->name_app; ?></th>
+                <td class="client_id"><?php echo $value->client_id; ?></td>
+                <td><?php echo $value->client_secret; ?></td>
+                <td class="token_id"><?php echo $value->access_token; ?></td>
+                <td>
+                    <button type="button" class="btn btn-info get_order">GET</button>
+                    <button type="button" class="btn btn-info view_order">VIEW</button>
+                </td>
+                <td>
+                <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </td>
+            </tr>
+        <?php $i++;} ?>
+        </tbody>
+    </table>
+    <nav class="mt-5">
+         <ul class="pagination">
+            <?php for($i=1;$i<=$total_pages;$i++): ?>
+                <?php if ($i==$pageno): ?>
+                    <li class="page-item active">
+                        <a class="page-link" href="#"><?php echo $i; ?><span class="sr-only">(current)</span></a>
+                    </li>
+                <?php else: ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo $admin_url; ?>&pageno=<?php echo $i; ?>" title="<?php echo $i; ?>"><?php echo $i; ?></a></li>
+                <?php endif ?>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+</div>

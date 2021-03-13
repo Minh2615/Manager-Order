@@ -1,0 +1,91 @@
+table td.day_to_ful {
+	padding: 0;
+}
+table td.day_to_ful span {
+	font-size: 13px;
+	display: inline-block;
+	padding: 4px 6px;
+	margin-top: 10px;
+	border-radius: 5px;
+	width: 110px;
+	text-align: center;
+}
+.alert-danger, .alert-error {
+	color: #b94a48;
+	background-color: #f2dede;
+	border-color: #eed3d7;
+}
+.alert-warning{
+	text-shadow: 0 1px 0 hsla(0,0%,100%,.5);
+	background-color: #fcf8e3;
+	border: 1px solid #fbeed5;	
+	border-radius: 4px;
+}
+th span.short_day {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	cursor: pointer;
+}
+th span.short_day i {
+	display: block;
+	text-align: center;
+	color: #2c82fc;
+	font-size: 15px;
+}
+th span.short_day:hover i{
+	border: 1px solid #2c82fc;
+}
+#track_id {
+	width: 280px;
+}
+#track_provider {
+	width: 100px;
+}
+td.product_name{
+	width: 260px;
+	display: block;
+	text-align: justify;
+}
+#view_shiping{
+	display: block;
+	margin-bottom: 0px;
+}
+
+.view_shiping {
+	color: #00c3ff;
+	font-weight: bold;
+	padding-bottom: 1px;
+	cursor: pointer;
+	margin-bottom: 0;
+}
+.view_shiping:hover{
+	text-decoration: underline;
+}
+.row_order_note {
+	position: relative;
+}
+.icon_note , .icon_note_cc {
+	position: absolute;
+	font-size: 20px;
+	color: #009fff;
+	right: 10px;
+	top: -20px;
+	cursor: pointer;
+	padding: 5px;
+	z-index: 10;
+}
+td.state_order span {
+	display: inline-block;
+	padding: 3px 4px;
+	background-color: #1cd24a;
+	color: white;
+	border-radius: 5px;
+	font-weight: bold;
+}
+table.tb-confirmed-ship td{
+	text-align: left !important;
+}
+table.tb-confirmed-ship td strong{
+	font-weight: bold !important;
+}
