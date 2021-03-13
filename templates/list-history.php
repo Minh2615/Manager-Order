@@ -1,10 +1,10 @@
 
 <div class="container-fluid list_client_id mt-5">
     <div class="row">
-        <div class="col-6">
+        <div class="col-4">
             <p class="h1"><?php echo __( 'List Order', 'order_sandbox' ); ?></p>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <ul class="nav nav-pills">
                 <li class="nav-item">
                     <a class="nav-link nav-time <?php echo $_GET['time']==0 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=0' ?>">All time</a>
@@ -22,6 +22,19 @@
                     <a class="nav-link nav-time <?php echo $_GET['time']==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Month</a>
                 </li>
             </ul>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <select class="custom_search" id="key_search">
+                        <option value="order_id" selected=""> Order id </option>     
+                        <option value="product_id">Product Id </option> 
+                        <option value="shipping_name"> User Name </option>  
+                    </select>
+                </div>
+                <input type="text" class="form-control" placeholder="Enter the key..." name="val_search" value="<?php echo $_GET['val_search'] ? $_GET['val_search'] : ''; ?>">
+                <button type="button" class="btn btn-dark btn-search_order"><i class="fa fa-search" aria-hidden="true"></i></button>
+            </div> 
         </div>
     </div>
     <table class="table table-striped">

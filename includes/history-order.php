@@ -49,6 +49,17 @@ class HistoryOrder{
         if(!empty($_GET['time'])){
             $admin_url.='&time='.$_GET['time'];
         }
+        if(!empty($_GET['val_search'])){
+            $admin_url.='&val_search='.$_GET['val_search'];
+        }
+        if(!empty($_GET['key_search'])){
+            $admin_url.='&key_search='.$_GET['key_search'];
+        }
+        
+        $param_kv = '';
+        if (isset($_GET['val_search']) && isset($_GET['key_search']) ) {
+            $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
+        }
 
         if($_GET['time'] == 1){
             $param_time = 'order_time >= date_sub(now(), interval 1 day)';
@@ -62,11 +73,11 @@ class HistoryOrder{
             $param_time = 'order_time >= date_sub(now(), interval 30 day)';
         }
 
-        $total_pages_sql = $wpdb->get_var( "SELECT count(order_id) FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED', 'PROCESSING') AND {$param_time}" );
+        $total_pages_sql = $wpdb->get_var( "SELECT count(order_id) FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED', 'PROCESSING') AND {$param_time} {$param_kv}" );
 
         $total_pages = ceil($total_pages_sql / $records_per_page);
 
-        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED','PROCESSING') AND {$param_time} ORDER BY order_time {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
+        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED','PROCESSING') AND {$param_time} {$param_kv} ORDER BY order_time {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
         
         $data = $wpdb->get_results($query_data);
 
