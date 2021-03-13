@@ -19,7 +19,7 @@
                     <a class="nav-link nav-time <?php echo $_GET['time']==7 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=7' ?>">Last Week</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Monthhhhh</a>
+                    <a class="nav-link nav-time <?php echo $_GET['time']==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Month</a>
                 </li>
             </ul>
         </div>
