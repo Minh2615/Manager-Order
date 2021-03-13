@@ -557,6 +557,7 @@ jQuery(document).ready(function($){
             var time = url_string.searchParams.get('time');
 
             var param_time = '' , param_s_val = '' , param_s_key = '';
+            
             if(time){
                 param_time = '&time='+time;
             }
