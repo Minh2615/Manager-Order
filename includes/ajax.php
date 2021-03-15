@@ -190,7 +190,11 @@ class ManagerOrderAjax {
                     'shipped_date' => $value->Order->shipped_date,
                     'tracking_confirmed' => $value->Order->tracking_confirmed,
                 ));
-            }
+            }else{
+                $wpdb->update($wpdb->prefix.'mpo_order',
+                  array('access_token' => $token) ,
+                  array('order_id' => $value->Order->order_id));   
+          }
         };
         if($respons->paging !=""){
             $this->get_order_paginate_mpo($respons->paging->next , $token , $client_id);
