@@ -52,8 +52,10 @@ class CustomOrder{
 
         $offset = ($pageno-1) * $records_per_page;
         //order time
+        $today=date("Y-m-d");
+
         if($_GET['time'] == 1){
-            $param_time = 'order_time >= date_sub(now(), interval 1 day)';
+            $param_time = 'order_time >= "'.$today.'"';
         }else if($_GET['time']==0){
             $param_time = 'order_time <= date_sub(now(), interval 0 day)';
         }else if($_GET['time'] == 2){
@@ -104,6 +106,7 @@ class CustomOrder{
 
             $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order = 'APPROVED' AND {$param_time} {$param_kv} OR status_order IS NULL OR status_order = '' ORDER BY hours_to_fulfill {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
             
+            var_dump($query_data);
             $data = $wpdb->get_results($query_data);
 
         }
