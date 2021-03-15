@@ -61,8 +61,9 @@ class HistoryOrder{
             $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
         }
 
+        $today=date("Y-m-d");
         if($_GET['time'] == 1){
-            $param_time = 'order_time >= date_sub(now(), interval 1 day)';
+            $param_time = 'order_time >= "'.$today.'"';
         }else if($_GET['time']==0){
             $param_time = 'order_time <= date_sub(now(), interval 0 day)';
         }else if($_GET['time'] == 2){
