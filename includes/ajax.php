@@ -307,19 +307,40 @@ class ManagerOrderAjax {
         global $wpdb;
 
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
-    
+        $csv = array();
         $fileName = $_FILES["file_product"]["tmp_name"];
-        $file = fopen($fileName, "r");
-        $row = fgetcsv($file, 10000, ",");
-        while (($row = fgetcsv($file, 10000, ",")) !== FALSE) {
-
-            $wpdb->replace($wpdb->prefix . 'product', array(
-                'product_sku'=>$row[1]
-            ));
+        $file = fopen($fileName, 'r');
+        if ($_FILES["file_product"]["size"] > 0) {
+            while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+               if($column>0){
+                $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+                    'access_token'=>$token,
+                    'product_parent' => $column[0],
+                    'product_sku'=> $column[1],
+                    'product_upc'=> $column[2],
+                    'merchant_name'=> $column[3],
+                    'product_name'=> $column[4],
+                    'declared_name'=> $column[5],
+                    'declared_local_name'=> $column[6],
+                    'product_pieces'=> $column[7],
+                    'product_color'=> $column[8],
+                    'product_size'=> $column[9],
+                    'product_quantity'=> $column[10],
+                    'product_tags'=> $column[11],
+                    'localized_currency_code'=> $column[12],
+                    'product_des'=> $column[13],
+                    'product_price'=> $column[14],
+                    'product_shipping'=> $column[15],
+                    'shipping_time'=> $column[16],
+                    'landing_page_url'=> $column[17],
+                    'product_img'=> $column[18],
+                ));
+                $csv[] = $column;
+               }
+            }
         }
-
-        wp_send_json_success($row);
-
+        fclose($file);
+        wp_send_json_success($csv);
         die();
 
     }
