@@ -55,6 +55,9 @@ class ManagerOrder{
 
     public static function on_activation() {
 
+        /**
+         * @var Mpo_Table
+         */
 		$mpoDatabase = Mpo_Table::init();
 		$mpoDatabase->make();
 	}

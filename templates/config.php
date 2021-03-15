@@ -43,6 +43,7 @@
                 <th scope="col"><?php echo __( 'Client Secret', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Access Token', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Products', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Actions', 'order_sandbox' ); ?></th>
             </tr>
         </thead>
@@ -75,7 +76,19 @@
                     <button type="button" class="btn btn-info view_order">VIEW</button>
                 </td>
                 <td>
-                <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    <form class="form-horizontal" action="" method="post"
+                        name="frmCSVImport" id="frmCSVImport"
+                        enctype="multipart/form-data">
+                        <div class="input-row">
+                        
+                            <input type="file" name="file_product" id="file_product" accept=".csv">
+                            <input type="hidden" name="access_token" value="<?php echo $value->access_token; ?>">
+                            <button type="submit" class="btn btn-info upload_poduct"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
             </tr>
         <?php $i++;} ?>

@@ -607,4 +607,39 @@ jQuery(document).ready(function($){
             window.location.href = short_order;
         });
     }
+
+    //upload csv
+    jQuery('#frmCSVImport').on('submit', function(e){
+        e.preventDefault();
+        var postData = new FormData(this);       
+        postData.append('action', 'upload_csv_mpo_product');
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            type: "POST",
+            data : postData,
+            processData: false,
+            contentType: false,
+            success: function(result){ 
+                console.log(result);
+                // if(result.data === 1){
+                //         swal({title: "Success", type: 
+                //             "success"});
+                // }else{
+                //     swal({title:"Error", type: 
+                //         "error"}).then(function(){ 
+                //             location.reload();
+                //         }
+                //     );
+                // }               
+            },
+            error: function(xhr){
+                // swal({title: "Error", type: 
+                //     "error"}).then(function(){ 
+                //         //location.reload();
+                //     }
+                // );
+                console.log(xhr.status);
+            },
+        })
+    });
 });

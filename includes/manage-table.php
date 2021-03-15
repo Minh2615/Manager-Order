@@ -38,7 +38,7 @@ class Mpo_Table{
     private function make_or_update_the_tables() {
 		$this->mpo_config();
 		$this->mpo_order();
-
+		$this->mpo_product();
 	}
 
     private function mpo_config() {
@@ -99,6 +99,37 @@ class Mpo_Table{
 				custom_note_cc varchar(255),
 				PRIMARY KEY (order_id)
 			) " . $this->_charset_collate . ';';
+
+		dbDelta( $sql );
+	}
+	private function mpo_product() {
+		$table_name = $this->_wpdb->prefix . 'mpo_product';
+
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+                product_sku varchar(255),
+				product_name varchar(255),
+				access_token varchar(255),
+				product_parent varchar(255),
+				product_des varchar(255),
+				product_price varchar(255),
+				product_img varchar(255),
+				product_shipping varchar(255),
+				shipping_time varchar(255),
+				landing_page_url varchar(255),
+				product_upc varchar(255),
+				merchant_name varchar(255),
+				declared_name varchar(255),
+				declared_local_name varchar(255),
+				product_pieces bigint(20),
+				product_color text,
+				product_size text,
+				product_quantity bigint(20),
+				product_tags varchar(255),
+				localized_currency_code text,
+				PRIMARY KEY (product_sku)
+			) " . $this->_charset_collate . ';';
+
+
 
 		dbDelta( $sql );
 	}

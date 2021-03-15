@@ -40,6 +40,9 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 		add_action( 'wp_ajax_nopriv_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 
+        add_action( 'wp_ajax_upload_csv_mpo_product', array( $this, 'upload_csv_mpo_product' ) );
+		add_action( 'wp_ajax_nopriv_upload_csv_mpo_product', array( $this, 'upload_csv_mpo_product' ) );
+
 
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -300,6 +303,27 @@ class ManagerOrderAjax {
         }
     }   
 
+    public function upload_csv_mpo_product(){
+        global $wpdb;
+
+        $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
+    
+        $fileName = $_FILES["file_product"]["tmp_name"];
+        $file = fopen($fileName, "r");
+        $row = fgetcsv($file, 10000, ",");
+        while (($row = fgetcsv($file, 10000, ",")) !== FALSE) {
+
+            $wpdb->replace($wpdb->prefix . 'product', array(
+                'product_sku'=>$row[1]
+            ));
+        }
+
+        wp_send_json_success($row);
+
+        die();
+
+    }
+    
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',
