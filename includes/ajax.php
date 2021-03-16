@@ -43,10 +43,7 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 
-        add_action( 'wp_ajax_upload_product_merchant', array( $this, 'upload_product_merchant' ) );
-		add_action( 'wp_ajax_nopriv_upload_product_merchant', array( $this, 'upload_product_merchant' ) );
-
-
+        
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
         wp_schedule_single_event( time() + 3600, 'update_new_order_mpo' );
@@ -54,6 +51,14 @@ class ManagerOrderAjax {
         add_action('update_status_order_mpo',array($this,'auto_update_status_order_mpo'));
 
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
+
+
+        add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'));
+
+        wp_schedule_single_event( time() + 600, 'upload_product_mpo' );
+
+
+
      
 	}
 
@@ -353,14 +358,15 @@ class ManagerOrderAjax {
 
     }
 
-    public function upload_product_merchant(){
+    public function auto_upload_product_merchant(){
         global $wpdb;
 
         $token = isset($_POST['token']) ? $_POST['token'] : '';
 
-        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v2/product/add';
+        $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
+        $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
 
-        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product WHERE access_token = {$token}");
+        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product WHERE access_token = '{$token}' ");
         foreach($list_product as $value){
             $request = array(
                 'name'=>$value->product_name,
@@ -371,7 +377,6 @@ class ManagerOrderAjax {
                 'size'=>$value->product_size,
                 'inventory'=>$value->product_quantity,
                 'price'=>$value->product_price,
-                'shipping'=>$value->product_shipping,
                 'localized_currency_code'=>$value->localized_currency_code,
                 'shipping_time'=>$value->shipping_time,
                 'main_image'=>$value->product_img,
@@ -381,11 +386,31 @@ class ManagerOrderAjax {
                 'declared_name'=>$value->declared_name,
                 'declared_local_name'=>$value->declared_local_name,
                 'pieces'=>$value->product_pieces,
-                'access_token'=>$value->access_token
+                'access_token'=>$value->access_token,
+                'localized_shipping' => 60
             );
-            $data = $this->request_manager_order($api_endpoint, $request,'POST');
+            $arr_request = array(
+                'method'     => 'POST',
+                'headers'     => array(),
+                'body'       => $request,
+                'timeout'    => 70,
+                'sslverify'  => false,
+            );
+            if($value->product_sku == $value->product_parent){
+                $request['shipping'] = $value->product_shipping;
+                $response = wp_remote_post( $api_product , $arr_request );
+            }else{
+                unset($request['shipping']);
+                unset( $request['localized_shipping'] );
+        
+                $response = wp_remote_post( $api_variable , $arr_request );
+            }
+            
+            $parsed_response = json_decode( $response['body'] );
+        
+            var_dump($parsed_response);
         }
-        wp_send_json_success($data);
+        wp_send_json_success();
         die();
     }
 
