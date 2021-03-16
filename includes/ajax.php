@@ -40,8 +40,11 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 		add_action( 'wp_ajax_nopriv_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 
-        add_action( 'wp_ajax_upload_csv_mpo_product', array( $this, 'upload_csv_mpo_product' ) );
-		add_action( 'wp_ajax_nopriv_upload_csv_mpo_product', array( $this, 'upload_csv_mpo_product' ) );
+        add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
+		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
+
+        add_action( 'wp_ajax_upload_product_merchant', array( $this, 'upload_product_merchant' ) );
+		add_action( 'wp_ajax_nopriv_upload_product_merchant', array( $this, 'upload_product_merchant' ) );
 
 
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
@@ -303,17 +306,18 @@ class ManagerOrderAjax {
         }
     }   
 
-    public function upload_csv_mpo_product(){
+    public function upload_csv_product_mpo(){
         global $wpdb;
 
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
         $csv = array();
         $fileName = $_FILES["file_product"]["tmp_name"];
         $file = fopen($fileName, 'r');
+        fgetcsv($file);
         if ($_FILES["file_product"]["size"] > 0) {
             while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-               if($column>0){
-                $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+               
+               $result = $wpdb->replace($wpdb->prefix . 'mpo_product', array(
                     'access_token'=>$token,
                     'product_parent' => $column[0],
                     'product_sku'=> $column[1],
@@ -336,14 +340,55 @@ class ManagerOrderAjax {
                     'product_img'=> $column[18],
                 ));
                 $csv[] = $column;
-               }
+               
             }
         }
         fclose($file);
-        wp_send_json_success($csv);
+
+       // $result = $this->upload_product_merchant();
+
+        wp_send_json_success($result);
+        
         die();
 
     }
+
+    public function upload_product_merchant(){
+        global $wpdb;
+
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+
+        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v2/product/add';
+
+        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product WHERE access_token = {$token}");
+        foreach($list_product as $value){
+            $request = array(
+                'name'=>$value->product_name,
+                'description'=>$value->product_des,
+                'tags'=>$value->product_tags,
+                'sku'=>$value->product_sku,
+                'color'=>$value->product_color,
+                'size'=>$value->product_size,
+                'inventory'=>$value->product_quantity,
+                'price'=>$value->product_price,
+                'shipping'=>$value->product_shipping,
+                'localized_currency_code'=>$value->localized_currency_code,
+                'shipping_time'=>$value->shipping_time,
+                'main_image'=>$value->product_img,
+                'parent_sku'=>$value->product_parent,
+                'landing_page_url'=>$value->landing_page_url,
+                'upc'=>$value->product_upc,
+                'declared_name'=>$value->declared_name,
+                'declared_local_name'=>$value->declared_local_name,
+                'pieces'=>$value->product_pieces,
+                'access_token'=>$value->access_token
+            );
+            $data = $this->request_manager_order($api_endpoint, $request,'POST');
+        }
+        wp_send_json_success($data);
+        die();
+    }
+
     
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(

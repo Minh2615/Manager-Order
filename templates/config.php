@@ -83,12 +83,13 @@
                         
                             <input type="file" name="file_product" id="file_product" accept=".csv">
                             <input type="hidden" name="access_token" value="<?php echo $value->access_token; ?>">
-                            <button type="submit" class="btn btn-info upload_poduct"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                            <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
                         </div>
                     </form>
                 </td>
                 <td>
                     <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info upload_product"><i class="fa fa-upload" aria-hidden="true"></i></button>
                 </td>
             </tr>
         <?php $i++;} ?>

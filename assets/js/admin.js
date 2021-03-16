@@ -610,9 +610,12 @@ jQuery(document).ready(function($){
 
     //upload csv
     jQuery('#frmCSVImport').on('submit', function(e){
+        $(document).ajaxSend(function() {
+            $("#overlay").fadeIn(300);　
+        });
         e.preventDefault();
         var postData = new FormData(this);       
-        postData.append('action', 'upload_csv_mpo_product');
+        postData.append('action', 'upload_csv_product_mpo');
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "POST",
@@ -622,8 +625,11 @@ jQuery(document).ready(function($){
             success: function(result){ 
                 console.log(result);
                 // if(result.data === 1){
-                //         swal({title: "Success", type: 
-                //             "success"});
+                //     swal({title: "Success", type: 
+                //         "success"}).then(function(){ 
+                //             location.reload();
+                //         }
+                //     );
                 // }else{
                 //     swal({title:"Error", type: 
                 //         "error"}).then(function(){ 
@@ -633,11 +639,35 @@ jQuery(document).ready(function($){
                 // }               
             },
             error: function(xhr){
-                // swal({title: "Error", type: 
-                //     "error"}).then(function(){ 
-                //         //location.reload();
-                //     }
-                // );
+                swal({title: "Error", type: 
+                    "error"});
+                console.log(xhr.status);
+            },
+        }).done(function() {
+            setTimeout(function(){
+              $("#overlay").fadeOut(300);
+            },500);
+        });
+    });
+
+    //upload product 
+    $('.upload_product').click(function(){
+       
+        var token = jQuery(this).closest('tr.row-tk').find('.token_id');
+        console.log('aaa');
+       
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            type: "post",
+            data: {
+                action:'upload_product_merchant',
+                token: token,
+            },
+            success: function(result){
+                console.log(result);
+                //window.open(url_data);
+            },
+            error: function(xhr){
                 console.log(xhr.status);
             },
         })
