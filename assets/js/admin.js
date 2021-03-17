@@ -624,19 +624,19 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(result){ 
                 console.log(result);
-                // if(result.data === 1){
-                //     swal({title: "Success", type: 
-                //         "success"}).then(function(){ 
-                //             location.reload();
-                //         }
-                //     );
-                // }else{
-                //     swal({title:"Error", type: 
-                //         "error"}).then(function(){ 
-                //             location.reload();
-                //         }
-                //     );
-                // }               
+                if(result.data === 1){
+                    swal({title: "Success", type: 
+                        "success"}).then(function(){ 
+                            location.reload();
+                        }
+                    );
+                }else{
+                    swal({title:"Error", type: 
+                        "error"}).then(function(){ 
+                            location.reload();
+                        }
+                    );
+                }               
             },
             error: function(xhr){
                 swal({title: "Error", type: 

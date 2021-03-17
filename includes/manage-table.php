@@ -120,6 +120,7 @@ class Mpo_Table{
 				merchant_name varchar(255),
 				declared_name varchar(255),
 				declared_local_name varchar(255),
+				localized_shipping text,
 				product_pieces bigint(20),
 				product_color text,
 				product_size text,
