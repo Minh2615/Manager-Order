@@ -52,12 +52,8 @@ class ManagerOrderAjax {
 
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
-
-        // add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'));
-
-        // wp_schedule_single_event( time() + 600, 'upload_product_mpo' );
-
-
+         //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
+        //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
 
      
 	}
@@ -317,6 +313,7 @@ class ManagerOrderAjax {
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
 
         $fileName = $_FILES["file_product"]["tmp_name"];
+        $a = array();
         $file = fopen($fileName, 'r');
         fgetcsv($file);
         if ($_FILES["file_product"]["size"] > 0) {
@@ -350,7 +347,7 @@ class ManagerOrderAjax {
         }
         fclose($file);
 
-       // $result = $this->upload_product_merchant();
+        $this->auto_upload_product_merchant();
 
         wp_send_json_success($result);
         
@@ -358,18 +355,14 @@ class ManagerOrderAjax {
 
     }
 
-    public function auto_upload_product_merchant($pageno){
+    public function start_upload_product_merchant($offset, $limit){
         global $wpdb;
 
         $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
         $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
 
-        $limit = 50;
-        $start = ($pageno-1) * $limit;
-        
-        $total = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product");
 
-        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product LIMIT {$start} , {$limit} ");
+        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product LIMIT {$offset} , {$limit} ");
         foreach($list_product as $value){
 
             if($value->product_sku == $value->product_parent){
@@ -438,6 +431,30 @@ class ManagerOrderAjax {
             // $parsed_response = json_decode( $response['body'] );
         
             // var_dump($parsed_response);
+        }
+
+    }
+
+    public function auto_upload_product_merchant(){
+        global $wpdb;
+
+        $limit = 100;
+        
+        $count = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product");
+
+        $total = ceil($count / $limit);
+
+        $time = 300;
+        
+        for($page=1; $page<=$total; $page++){
+            $offset = ($page-1) * $limit;
+            if($page ==1){
+                $this->start_upload_product_merchant($offset,$limit);            
+            }else{
+                add_action('upload_product_mpo_'.$page.'',array($this,'start_upload_product_merchant'), 10, 2);
+                wp_schedule_single_event( time() + $time, 'upload_product_mpo_'.$page.'',array($offset,$limit));
+            }
+            $time +=300;
         }
 
     }
