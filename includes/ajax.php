@@ -55,6 +55,8 @@ class ManagerOrderAjax {
 
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
+        add_action('upload_product_mpo', array($this,'auto_upload_product_merchant'),10,1);
+
          //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
         //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
 
@@ -439,36 +441,31 @@ class ManagerOrderAjax {
 
     }
 
-    // public function auto_upload_product_merchant(){
-    //     // global $wpdb;
+    public function auto_upload_product_merchant($p){
+        // global $wpdb;
 
-    //     // //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        // //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        $limit = 10;
 
-    //     $p = 1;
+        if(empty($p)) {
+          $p = 1;      
+        }
+        // $name_file = 'logistics_1003.csv';
+        $count = 40;
+        //$total = ceil($count / $limit);
+        $time = 60;
+        $offset = ($p-1) * $limit;
+        // // Handle upload to WISH
+        $response = $this->start_upload_product_merchant($offset,$limit);
 
-        
-    //     $limit = 10;
-
-    //     // $name_file = 'logistics_1003.csv';
-        
-    //     $count = 20;
-        
-    //     $total = ceil($count / $limit);
-
-    //     $time = 60;
-    //     $offset = ($p-1) * $limit;
-
-    //     // // Handle upload to WISH
-    //     $response = $this->start_upload_product_merchant($offset,$limit);      
-
-    //     if($response->message == '' ) {
-    //         $p++;
-    //         add_action('upload_product_mpo_'.$p, array($this,'auto_upload_product_merchant'));
-    //         wp_schedule_single_event( time() + $time, 'upload_product_mpo_'.$p);
-    //     } 
-    //      wp_send_json_success($response);
-    //      die();
-    // }
+        if( $offset <= $count) {
+            $p++;
+            wp_schedule_single_event( time() + $time, 'upload_product_mpo' , array($p));
+            $time +=60;
+        } 
+         wp_send_json_success($response->message);
+         die();
+    }
 
     
     public function request_manager_order($api_endpoint , $request , $method){
