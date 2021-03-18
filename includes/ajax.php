@@ -365,6 +365,7 @@ class ManagerOrderAjax {
         $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
         $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
 
+        $result = array();
 
         $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product LIMIT {$offset} , {$limit} ");
         foreach($list_product as $value){
@@ -399,7 +400,7 @@ class ManagerOrderAjax {
                     'sslverify'  => false,
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
-        
+                $parsed_response = json_decode( $respon['body'] );
             }else{
                 $new_request = array(
                     'name'=>$value->product_name,
@@ -428,47 +429,46 @@ class ManagerOrderAjax {
                     'timeout'    => 70,
                     'sslverify'  => false,
                 );
-        
+    
                 $respon =  wp_remote_post( $api_variable , $arr_request );
+                $parsed_response = json_decode( $respon['body'] );
             }
-            
-            // $parsed_response = json_decode( $response['body'] );
-        
-            // var_dump($parsed_response);
         }
+
+        return $parsed_response;
 
     }
 
-    public function auto_upload_product_merchant(){
-        global $wpdb;
+    // public function auto_upload_product_merchant(){
+    //     // global $wpdb;
 
-        //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+    //     // //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
 
-        $limit = 10;
+    //     $p = 1;
 
-        $name_file = 'logistics_1003.csv';
         
-        $count = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}'");
+    //     $limit = 10;
 
-        $total = ceil($count / $limit);
-
-        $time = 300;
+    //     // $name_file = 'logistics_1003.csv';
         
-        for($page=1; $page<=$total; $page++){
-            $offset = ($page-1) * $limit;
-            if($page == 1){
-                $this->start_upload_product_merchant($offset,$limit);            
-            }else{
-                add_action('upload_product_mpo_'.$page.'', array($this,'start_upload_product_merchant'), 10, 2);
-                wp_schedule_single_event( time() + $time, 'upload_product_mpo_'.$page.'',array($offset,$limit));
-            }
-            $time +=300;
-        }
-        $a = 1;
-        wp_send_json_success($total);
-        die();
+    //     $count = 20;
+        
+    //     $total = ceil($count / $limit);
 
-    }
+    //     $time = 60;
+    //     $offset = ($p-1) * $limit;
+
+    //     // // Handle upload to WISH
+    //     $response = $this->start_upload_product_merchant($offset,$limit);      
+
+    //     if($response->message == '' ) {
+    //         $p++;
+    //         add_action('upload_product_mpo_'.$p, array($this,'auto_upload_product_merchant'));
+    //         wp_schedule_single_event( time() + $time, 'upload_product_mpo_'.$p);
+    //     } 
+    //      wp_send_json_success($response);
+    //      die();
+    // }
 
     
     public function request_manager_order($api_endpoint , $request , $method){

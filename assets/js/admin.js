@@ -669,7 +669,14 @@ jQuery(document).ready(function($){
             },
             success: function(result){
                 console.log(result);
-                window.localStorage.removeItem('name_file' );
+                swal({title: "Success", type: 
+                        "success"}).then(function(){ 
+                            window.localStorage.removeItem('name_file');
+                            location.reload();
+                        }
+                    );
+               
+                
                 //window.open(url_data);
             },
             error: function(xhr){
