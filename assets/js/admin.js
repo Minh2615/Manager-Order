@@ -675,9 +675,6 @@ jQuery(document).ready(function($){
                             location.reload();
                         }
                     );
-               
-                
-                //window.open(url_data);
             },
             error: function(xhr){
                 console.log(xhr.status);

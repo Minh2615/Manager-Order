@@ -41,6 +41,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                
+                <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Date', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order ID', 'order_sandbox' ); ?></th>
                 <th scope="col">
