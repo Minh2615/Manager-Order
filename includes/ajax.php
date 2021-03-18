@@ -43,6 +43,9 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 
+        add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ) );
+		add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ) );
+
         
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -55,7 +58,6 @@ class ManagerOrderAjax {
          //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
         //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
 
-     
 	}
 
     public function sent_client_id(){
@@ -312,14 +314,17 @@ class ManagerOrderAjax {
 
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
 
-        $fileName = $_FILES["file_product"]["tmp_name"];
-        $a = array();
-        $file = fopen($fileName, 'r');
+        $fileName_tmp = $_FILES["file_product"]["tmp_name"];
+        $result = array();
+        $name = $_FILES["file_product"]["name"];
+        $result['name'] = $name;
+        $file = fopen($fileName_tmp, 'r');
         fgetcsv($file);
         if ($_FILES["file_product"]["size"] > 0) {
             while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
                
-               $result = $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+               $code = $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+                    'name_file'=>$name,
                     'access_token'=>$token,
                     'product_parent' => $column[0],
                     'product_sku'=> $column[1],
@@ -345,12 +350,11 @@ class ManagerOrderAjax {
                
             }
         }
+        $result['code'] = $code;
         fclose($file);
 
-        $this->auto_upload_product_merchant();
-
         wp_send_json_success($result);
-        
+
         die();
 
     }
@@ -438,9 +442,13 @@ class ManagerOrderAjax {
     public function auto_upload_product_merchant(){
         global $wpdb;
 
-        $limit = 100;
+        //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+
+        $limit = 10;
+
+        $name_file = 'logistics_1003.csv';
         
-        $count = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product");
+        $count = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}'");
 
         $total = ceil($count / $limit);
 
@@ -448,14 +456,17 @@ class ManagerOrderAjax {
         
         for($page=1; $page<=$total; $page++){
             $offset = ($page-1) * $limit;
-            if($page ==1){
+            if($page == 1){
                 $this->start_upload_product_merchant($offset,$limit);            
             }else{
-                add_action('upload_product_mpo_'.$page.'',array($this,'start_upload_product_merchant'), 10, 2);
+                add_action('upload_product_mpo_'.$page.'', array($this,'start_upload_product_merchant'), 10, 2);
                 wp_schedule_single_event( time() + $time, 'upload_product_mpo_'.$page.'',array($offset,$limit));
             }
             $time +=300;
         }
+        $a = 1;
+        wp_send_json_success($total);
+        die();
 
     }
 

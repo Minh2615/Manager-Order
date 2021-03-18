@@ -109,6 +109,7 @@ class Mpo_Table{
                 product_sku varchar(255),
 				product_name varchar(255),
 				access_token varchar(255),
+				name_file varchar(255),
 				product_parent varchar(255),
 				product_des varchar(255),
 				product_price varchar(255),

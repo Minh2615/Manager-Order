@@ -614,7 +614,7 @@ jQuery(document).ready(function($){
             $("#overlay").fadeIn(300);　
         });
         e.preventDefault();
-        var postData = new FormData(this);       
+        var postData = new FormData(this);  
         postData.append('action', 'upload_csv_product_mpo');
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
@@ -624,9 +624,12 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(result){ 
                 console.log(result);
-                if(result.data === 1){
+                if(result.data.code === 1){
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
+                            var data_name = result.data.name;
+                            window.localStorage.removeItem('name_file' );
+                            var file_name = window.localStorage.setItem("name_file", data_name );
                             location.reload();
                         }
                     );
@@ -651,25 +654,31 @@ jQuery(document).ready(function($){
     });
 
     //upload product 
-    $('.upload_product').click(function(){
-       
-        var token = jQuery(this).closest('tr.row-tk').find('.token_id');
-        console.log('aaa');
-       
+    jQuery(document).on('click','.upload_product', function(){
+        $(document).ajaxSend(function() {
+            $("#overlay").fadeIn(300);　
+        });
+        var name_file = window.localStorage.getItem("name_file");     
+        console.log(name_file);  
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
             data: {
-                action:'upload_product_merchant',
-                token: token,
+                action:'auto_upload_product_merchant',
+                name_file: name_file,
             },
             success: function(result){
                 console.log(result);
+                window.localStorage.removeItem('name_file' );
                 //window.open(url_data);
             },
             error: function(xhr){
                 console.log(xhr.status);
             },
-        })
+        }).done(function() {
+            setTimeout(function(){
+              $("#overlay").fadeOut(300);
+            },500);
+        });
     });
 });
