@@ -44,7 +44,6 @@
                 <th scope="col"><?php echo __( 'Access Token', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Products', 'order_sandbox' ); ?></th>
-                <th scope="col"><?php echo __( 'Notes', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Actions', 'order_sandbox' ); ?></th>
             </tr>
         </thead>
@@ -87,9 +86,6 @@
                             <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
                         </div>
                     </form>
-                </td>
-                <td class="note_upload_csv">
-                    
                 </td>
                 <td>
                     <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
