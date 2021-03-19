@@ -55,7 +55,7 @@ class ManagerOrderAjax {
 
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
-        add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,2);
+        add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
 
          //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
         //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
@@ -324,8 +324,7 @@ class ManagerOrderAjax {
         fgetcsv($file);
         if ($_FILES["file_product"]["size"] > 0) {
             while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-               
-               $code = $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+               $arr_insert = array(
                     'name_file'=>$name,
                     'access_token'=>$token,
                     'product_parent' => $column[0],
@@ -348,11 +347,14 @@ class ManagerOrderAjax {
                     'shipping_time'=> $column[17],
                     'landing_page_url'=> $column[18],
                     'product_img'=> $column[19],
-                ));
-               
+               );
+
+                $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
+                //$wpdb->insert_id;
+            
             }
         }
-        $result['code'] = $code;
+        $result['token'] = $token;
         fclose($file);
 
         wp_send_json_success($result);
@@ -361,13 +363,13 @@ class ManagerOrderAjax {
 
     }
 
-    public function start_upload_product_merchant($offset, $limit){
+    public function start_upload_product_merchant($offset, $limit ,$name_file, $token){
         global $wpdb;
 
         $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
         $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
 
-        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product LIMIT {$offset} , {$limit} ");
+        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
         foreach($list_product as $value){
 
             if($value->product_sku == $value->product_parent){
@@ -443,12 +445,13 @@ class ManagerOrderAjax {
 
         global $wpdb;
 
-        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        $name_file = 'logistics_1003.csv';
+        //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
 
         $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}'"));
-        //$count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = 'logistics_1003.csv'"));
 
-        //$count = 5670;
         $limit = 10;
 
         if(empty($p)) {
@@ -460,24 +463,16 @@ class ManagerOrderAjax {
         for($page = 1; $page<=$total;$page++){
             $offset = ($page-1) * $limit;
             if($page==1){
-                $response = $this->start_upload_product_merchant($offset,$limit);
+                $response = $this->start_upload_product_merchant($offset,$limit,$name_file,$token);
             }else{
-                wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit));
+                
+                wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit,$name_file,$token));
             }
             $time +=60;
         }
-        
-        //$offset = ($p-1) * $limit;
 
-        // $response = $this->start_upload_product_merchant($offset,$limit);
-
-        // if( $offset <= $count) {
-        //     $p++;
-        //     wp_schedule_single_event( time() + $time, 'upload_product_mpo' , array($p));
-        //     $time +=60;
-        // } 
-         wp_send_json_success($name_file);
-         die();
+        wp_send_json_success($name_file);
+        die();
     }
 
     

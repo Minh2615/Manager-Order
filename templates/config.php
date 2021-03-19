@@ -60,7 +60,7 @@
         $offset = ($pageno-1) * $records_per_page;
         $total_sql = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_config");
         $total_pages = ceil($total_sql / $records_per_page);
-        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_config LIMIT %d , %d", $offset , $records_per_page );
+        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_config ORDER BY client_id DESC LIMIT %d , %d ", $offset , $records_per_page);
         $rs = $wpdb->get_results($query_data);
         $i=1;
         foreach($rs as $value){

@@ -609,11 +609,12 @@ jQuery(document).ready(function($){
     }
 
     //upload csv
-    jQuery('#frmCSVImport').on('submit', function(e){
+    jQuery(document).on('submit','#frmCSVImport', function(e){
+        e.preventDefault();
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
         });
-        e.preventDefault();
+        
         var postData = new FormData(this);  
         postData.append('action', 'upload_csv_product_mpo');
         jQuery.ajax({
@@ -624,22 +625,25 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(result){ 
                 console.log(result);
-                if(result.data.code === 1){
+                //if(result.data.code === 1){
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
                             var data_name = result.data.name;
+                            var data_token = result.data.token;
                             window.localStorage.removeItem('name_file' );
+                            window.localStorage.removeItem('app_token' );
                             var file_name = window.localStorage.setItem("name_file", data_name );
+                            var app_token = window.localStorage.setItem("app_token", data_token );
                             location.reload();
                         }
                     );
-                }else{
-                    swal({title:"Error", type: 
-                        "error"}).then(function(){ 
-                            location.reload();
-                        }
-                    );
-                }               
+                // }else{
+                //     swal({title:"Error", type: 
+                //         "error"}).then(function(){ 
+                //             location.reload();
+                //         }
+                //     );
+                // }               
             },
             error: function(xhr){
                 swal({title: "Error", type: 
@@ -658,20 +662,24 @@ jQuery(document).ready(function($){
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
         });
-        var name_file = window.localStorage.getItem("name_file");     
-        console.log(name_file);  
+        var name_file = window.localStorage.getItem("name_file");   
+        var token =  window.localStorage.getItem("app_token");   
+        console.log(name_file);
+        console.log(token);
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
             data: {
                 action:'auto_upload_product_merchant',
                 name_file: name_file,
+                token : token,
             },
             success: function(result){
                 console.log(result);
                 swal({title: "Success", type: 
                         "success"}).then(function(){ 
                             window.localStorage.removeItem('name_file');
+                            window.localStorage.removeItem('token');
                             location.reload();
                         }
                     );

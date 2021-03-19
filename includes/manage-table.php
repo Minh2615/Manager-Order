@@ -106,6 +106,7 @@ class Mpo_Table{
 		$table_name = $this->_wpdb->prefix . 'mpo_product';
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+				id int(10) unsigned NOT NULL AUTO_INCREMENT,
                 product_sku varchar(255),
 				product_name varchar(255),
 				access_token varchar(255),
@@ -128,7 +129,7 @@ class Mpo_Table{
 				product_quantity bigint(20),
 				product_tags varchar(255),
 				localized_currency_code text,
-				PRIMARY KEY (product_sku)
+				PRIMARY KEY (id)
 			) " . $this->_charset_collate . ';';
 
 
