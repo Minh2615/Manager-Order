@@ -76,14 +76,17 @@
         $currency_symbols = mpo_currency_symbols();
         $list_time_down = array();
         $i=0;
+        global $wpdb;
         foreach($data as $value){
        
         $symbols = array_key_exists($value->currency_code , $currency_symbols) ? $currency_symbols[$value->currency_code] : '';
         $list_time_down[] = array($value->hours_to_fulfill, $value->order_time);
-        
+
+        $query_app_name = $wpdb->get_results("SELECT name_app FROM {$wpdb->prefix}mpo_config WHERE access_token = '{$value->access_token}'"); 
         ?>
             
             <tr class="row-tk">
+                <th scope="row"><?php echo $query_app_name[0]->name_app; ?></th>
                 <th scope="row"><?php echo $value->order_time; ?></th>
                 <td class="order_id"><?php echo $value->order_id; ?></td>
                 <td class="day_to_ful ful_<?php echo $i; ?>">

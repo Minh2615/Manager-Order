@@ -57,8 +57,6 @@ class ManagerOrderAjax {
 
         add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
 
-         //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
-        //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
 
 	}
 
@@ -369,7 +367,7 @@ class ManagerOrderAjax {
         $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
         $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
 
-        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
+        $list_product = $wpdb->get_results("SELECT DISTINCT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
         foreach($list_product as $value){
 
             if($value->product_sku == $value->product_parent){
@@ -402,7 +400,6 @@ class ManagerOrderAjax {
                     'sslverify'  => false,
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
-                $parsed_response = json_decode( $respon['body'] );
             }else{
                 $new_request = array(
                     'name'=>$value->product_name,
@@ -433,11 +430,10 @@ class ManagerOrderAjax {
                 );
     
                 $respon =  wp_remote_post( $api_variable , $arr_request );
-                $parsed_response = json_decode( $respon['body'] );
             }
         }
 
-        return $parsed_response;
+        return $respon;
 
     }
 
@@ -445,20 +441,17 @@ class ManagerOrderAjax {
 
         global $wpdb;
 
-        $name_file = 'logistics_1003.csv';
-        //$name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        //$name_file = 'logistics_1003.csv';
+        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
 
         $token = isset($_POST['token']) ? $_POST['token'] : '';
 
-        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}'"));
+        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
 
         $limit = 10;
 
-        if(empty($p)) {
-          $p = 1;      
-        }
-
         $time = 60;
+
         $total = ceil($count / $limit);
         for($page = 1; $page<=$total;$page++){
             $offset = ($page-1) * $limit;
@@ -471,7 +464,7 @@ class ManagerOrderAjax {
             $time +=60;
         }
 
-        wp_send_json_success($name_file);
+        wp_send_json_success($response);
         die();
     }
 

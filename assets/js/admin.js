@@ -625,15 +625,17 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(result){ 
                 console.log(result);
+                var data_name = result.data.name;
+                var data_token = result.data.token;
+                var current = new Date(jQuery.now());
+                window.localStorage.removeItem('name_file' );
+                window.localStorage.removeItem('app_token' );
+                var file_name = window.localStorage.setItem("name_file", data_name );
+                var app_token = window.localStorage.setItem("app_token", data_token );
+                
                 //if(result.data.code === 1){
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
-                            var data_name = result.data.name;
-                            var data_token = result.data.token;
-                            window.localStorage.removeItem('name_file' );
-                            window.localStorage.removeItem('app_token' );
-                            var file_name = window.localStorage.setItem("name_file", data_name );
-                            var app_token = window.localStorage.setItem("app_token", data_token );
                             location.reload();
                         }
                     );
