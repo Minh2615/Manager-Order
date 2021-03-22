@@ -432,7 +432,6 @@ class ManagerOrderAjax {
                 $respon =  wp_remote_post( $api_variable , $arr_request );
             }
         }
-
         return $respon;
 
     }
