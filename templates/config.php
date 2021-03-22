@@ -39,11 +39,10 @@
             <tr>
                 <th scope="col"><?php echo __( 'ID', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
-                <th scope="col"><?php echo __( 'Client ID', 'order_sandbox' ); ?></th>
-                <th scope="col"><?php echo __( 'Client Secret', 'order_sandbox' ); ?></th>
-                <th scope="col"><?php echo __( 'Access Token', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'App Info', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Products', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Notes', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Actions', 'order_sandbox' ); ?></th>
             </tr>
         </thead>
@@ -66,11 +65,12 @@
         foreach($rs as $value){
              ?>
             <tr class="row-tk">
-                <th scope="row"><?php echo $i; ?></th>
-                <th><?php echo $value->name_app; ?></th>
-                <td class="client_id"><?php echo $value->client_id; ?></td>
-                <td><?php echo $value->client_secret; ?></td>
-                <td class="token_id"><?php echo $value->access_token; ?></td>
+                <td scope="row"><?php echo $i; ?></td>
+                <td><?php echo $value->name_app; ?></td>
+                <td class="app_info">
+                    <p>CLient ID: <span class="client_id"><?php echo $value->client_id; ?></span></p>
+                    <p>CLient Secret: <span><?php echo $value->client_secret; ?></span></p>
+                    <p>Token: <span class="token_id"><?php echo $value->access_token; ?></span></p>
                 <td>
                     <button type="button" class="btn btn-info get_order">GET</button>
                     <button type="button" class="btn btn-info view_order">VIEW</button>
@@ -86,6 +86,11 @@
                             <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
                         </div>
                     </form>
+                </td>
+                <td>
+                    <textarea class="note_app" name="note_app" cols="20">
+                        <?php echo $value->custom_note; ?>
+                    </textarea>
                 </td>
                 <td>
                     <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>

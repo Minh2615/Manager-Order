@@ -6,7 +6,7 @@ jQuery(document).ready(function($){
     // get code 
     $(document).on('click','.get_code',function(){
         var client_id = $('input[name="client_id"]').val();
-        var url_data = 'https://sandbox.merchant.wish.com/v3/oauth/authorize?client_id='+client_id;
+        var url_data = 'https://merchant.wish.com/v3/oauth/authorize?client_id='+client_id;
 
         var name_app = $('input[name="name_app"]').val();
         var client_secret = $('input[name="client_secret"]').val();
@@ -97,8 +97,8 @@ jQuery(document).ready(function($){
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
         });
-        var token_id = jQuery(this).closest('tr.row-tk').find('td.token_id').html();
-        var client_id = jQuery(this).closest('tr.row-tk').find('td.client_id').html();
+        var token_id = jQuery(this).closest('tr.row-tk').find('span.token_id').html();
+        var client_id = jQuery(this).closest('tr.row-tk').find('span.client_id').html();
        
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
@@ -143,7 +143,7 @@ jQuery(document).ready(function($){
 
     //view order by client id
     jQuery(document).on('click','.view_order',function(){
-        var client_id = jQuery(this).closest('tr.row-tk').find('td.client_id').html();
+        var client_id = jQuery(this).closest('tr.row-tk').find('span.client_id').html();
         var url_order =  mo_localize_script.page_order+'&client_id='+client_id;
         window.location.href = url_order;
     })
@@ -266,7 +266,7 @@ jQuery(document).ready(function($){
 
     // remove config app
     jQuery(document).on('click','.btn.remove_app',function(){
-        var client_id = jQuery(this).closest('tr.row-tk').find('td.client_id').html();
+        var client_id = jQuery(this).closest('tr.row-tk').find('span.client_id').html();
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
@@ -609,11 +609,12 @@ jQuery(document).ready(function($){
     }
 
     //upload csv
-    jQuery('#frmCSVImport').on('submit', function(e){
+    jQuery(document).on('submit','#frmCSVImport', function(e){
+        e.preventDefault();
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
         });
-        e.preventDefault();
+        
         var postData = new FormData(this);  
         postData.append('action', 'upload_csv_product_mpo');
         jQuery.ajax({
@@ -624,17 +625,22 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(result){ 
                 console.log(result);
-                if(result.data.code === 1){
+                var data_name = result.data.name;
+                var data_token = result.data.token;
+                //var current = new Date(jQuery.now());
+                window.localStorage.removeItem('name_file' );
+                window.localStorage.removeItem('app_token' );
+                var file_name = window.localStorage.setItem("name_file", data_name );
+                var app_token = window.localStorage.setItem("app_token", data_token );
+                
+                if(result.data.name !== ""){
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
-                            var data_name = result.data.name;
-                            window.localStorage.removeItem('name_file' );
-                            var file_name = window.localStorage.setItem("name_file", data_name );
                             location.reload();
                         }
                     );
                 }else{
-                    swal({title:"Error", type: 
+                    swal({title:"File Empty", type: 
                         "error"}).then(function(){ 
                             location.reload();
                         }
@@ -658,20 +664,22 @@ jQuery(document).ready(function($){
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
         });
-        var name_file = window.localStorage.getItem("name_file");     
-        console.log(name_file);  
+        var name_file = window.localStorage.getItem("name_file");   
+        var token =  window.localStorage.getItem("app_token");   
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
             data: {
                 action:'auto_upload_product_merchant',
                 name_file: name_file,
+                token : token,
             },
             success: function(result){
                 console.log(result);
                 swal({title: "Success", type: 
                         "success"}).then(function(){ 
                             window.localStorage.removeItem('name_file');
+                            window.localStorage.removeItem('token');
                             location.reload();
                         }
                     );

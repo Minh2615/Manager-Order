@@ -55,10 +55,8 @@ class ManagerOrderAjax {
 
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
-        add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,2);
+        add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
 
-         //     add_action('upload_product_mpo',array($this,'auto_upload_product_merchant'), 10, 1);
-        //     wp_schedule_single_event( time() + 600, 'upload_product_mpo');
 
 	}
 
@@ -104,7 +102,7 @@ class ManagerOrderAjax {
             'redirect_uri'=>$redirect_uri,
         );
 
-        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v3/oauth/access_token';
+        $api_endpoint = 'https://merchant.wish.com/api/v3/oauth/access_token';
 
         $parsed_response = $this->request_manager_order($api_endpoint,$request, 'GET');
             
@@ -136,7 +134,7 @@ class ManagerOrderAjax {
             'access_token'=> $token,
         );
         
-        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v2/order/multi-get';
+        $api_endpoint = 'https://merchant.wish.com/api/v2/order/multi-get';
         
         $respons = $this->request_manager_order($api_endpoint,$request , 'GET');
 
@@ -221,7 +219,7 @@ class ManagerOrderAjax {
         $track_provider = isset($_POST['track_provider']) ? $_POST['track_provider'] : '';
         $country_code = isset($_POST['country_code']) ? $_POST['country_code'] : '';
 
-        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v2/order/fulfill-one';
+        $api_endpoint = 'https://merchant.wish.com/api/v2/order/fulfill-one';
 
         $token = $wpdb->get_var("SELECT access_token FROM {$wpdb->prefix}mpo_order WHERE order_id = '{$order_id}'");
 
@@ -278,7 +276,7 @@ class ManagerOrderAjax {
     }
 
     public function request_update_order_mpo($order_id , $token){
-        $api_endpoint = 'https://sandbox.merchant.wish.com/api/v2/order';
+        $api_endpoint = 'https://merchant.wish.com/api/v2/order';
         $request= array(
             'access_token' =>$token,
             'id'=>$order_id,
@@ -324,8 +322,7 @@ class ManagerOrderAjax {
         fgetcsv($file);
         if ($_FILES["file_product"]["size"] > 0) {
             while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-               
-               $code = $wpdb->replace($wpdb->prefix . 'mpo_product', array(
+               $arr_insert = array(
                     'name_file'=>$name,
                     'access_token'=>$token,
                     'product_parent' => $column[0],
@@ -348,11 +345,14 @@ class ManagerOrderAjax {
                     'shipping_time'=> $column[17],
                     'landing_page_url'=> $column[18],
                     'product_img'=> $column[19],
-                ));
-               
+               );
+
+                $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
+                //$wpdb->insert_id;
+            
             }
         }
-        $result['code'] = $code;
+        $result['token'] = $token;
         fclose($file);
 
         wp_send_json_success($result);
@@ -361,13 +361,13 @@ class ManagerOrderAjax {
 
     }
 
-    public function start_upload_product_merchant($offset, $limit){
+    public function start_upload_product_merchant($offset, $limit ,$name_file, $token){
         global $wpdb;
 
-        $api_product = 'https://sandbox.merchant.wish.com/api/v2/product/add';
-        $api_variable = 'https://sandbox.merchant.wish.com/api/v2/variant/add';
+        $api_product = 'https://merchant.wish.com/api/v2/product/add';
+        $api_variable = 'https://merchant.wish.com/api/v2/variant/add';
 
-        $list_product = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}mpo_product LIMIT {$offset} , {$limit} ");
+        $list_product = $wpdb->get_results("SELECT DISTINCT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
         foreach($list_product as $value){
 
             if($value->product_sku == $value->product_parent){
@@ -400,7 +400,6 @@ class ManagerOrderAjax {
                     'sslverify'  => false,
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
-                $parsed_response = json_decode( $respon['body'] );
             }else{
                 $new_request = array(
                     'name'=>$value->product_name,
@@ -431,11 +430,10 @@ class ManagerOrderAjax {
                 );
     
                 $respon =  wp_remote_post( $api_variable , $arr_request );
-                $parsed_response = json_decode( $respon['body'] );
             }
         }
 
-        return $parsed_response;
+        return $respon;
 
     }
 
@@ -443,41 +441,31 @@ class ManagerOrderAjax {
 
         global $wpdb;
 
+        //$name_file = 'logistics_1003.csv';
         $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
 
-        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}'"));
-        //$count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = 'logistics_1003.csv'"));
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
 
-        //$count = 5670;
+        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
+
         $limit = 10;
 
-        if(empty($p)) {
-          $p = 1;      
-        }
-
         $time = 60;
+
         $total = ceil($count / $limit);
         for($page = 1; $page<=$total;$page++){
             $offset = ($page-1) * $limit;
             if($page==1){
-                $response = $this->start_upload_product_merchant($offset,$limit);
+                $response = $this->start_upload_product_merchant($offset,$limit,$name_file,$token);
             }else{
-                wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit));
+                
+                wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit,$name_file,$token));
             }
             $time +=60;
         }
-        
-        //$offset = ($p-1) * $limit;
 
-        // $response = $this->start_upload_product_merchant($offset,$limit);
-
-        // if( $offset <= $count) {
-        //     $p++;
-        //     wp_schedule_single_event( time() + $time, 'upload_product_mpo' , array($p));
-        //     $time +=60;
-        // } 
-         wp_send_json_success($name_file);
-         die();
+        wp_send_json_success($response);
+        die();
     }
 
     

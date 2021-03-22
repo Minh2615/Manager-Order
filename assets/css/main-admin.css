@@ -131,3 +131,10 @@ table.tb-confirmed-ship td strong{
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
+td.app_info p{
+	font-size: 15px;
+	font-weight: bold;
+}
+td.app_info p span{
+	font-weight: normal;
+}
