@@ -60,25 +60,27 @@ class HistoryOrder{
         if (isset($_GET['val_search']) && isset($_GET['key_search']) ) {
             $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
         }
-
+        //custom time
         $today=date("Y-m-d");
+        $yesterday = date('Y-m-d',strtotime("-1 days"));
+        echo $yesterday;
         if($_GET['time'] == 1){
             $param_time = 'order_time >= "'.$today.'"';
         }else if($_GET['time']==0){
             $param_time = 'order_time <= date_sub(now(), interval 0 day)';
         }else if($_GET['time'] == 2){
-            $param_time = 'order_time >= date_sub(now(), interval 2 day)';
+            $param_time = 'order_time BETWEEN "'.$yesterday.'" and "'.$today.'"';
         }else if($_GET['time'] == 7){
             $param_time = 'order_time >= date_sub(now(), interval 7 day)';
         }else if($_GET['time'] == 30){
             $param_time = 'order_time >= date_sub(now(), interval 30 day)';
         }
-
-        $total_pages_sql = $wpdb->get_var( "SELECT count(order_id) FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED', 'PROCESSING') AND {$param_time} {$param_kv}" );
+        //end time
+        $total_pages_sql = $wpdb->get_var( "SELECT count(order_id) FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED', 'PROCESSING','REFUND') AND {$param_time} {$param_kv}" );
 
         $total_pages = ceil($total_pages_sql / $records_per_page);
 
-        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED','PROCESSING') AND {$param_time} {$param_kv} ORDER BY order_time {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
+        $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_order WHERE status_order IN ('SHIPPED','PROCESSING','REFUND') AND {$param_time} {$param_kv} ORDER BY order_time {$short_by} LIMIT %d , %d" , $offset , $records_per_page );
         
         $data = $wpdb->get_results($query_data);
 

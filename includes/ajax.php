@@ -433,6 +433,10 @@ class ManagerOrderAjax {
                 $respon =  wp_remote_post( $api_variable , $arr_request );
             }
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a681ef24fc428c884cf37b53d959b717e90afaae
         return $respon;
 
     }
@@ -445,11 +449,19 @@ class ManagerOrderAjax {
         $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
 
         $token = isset($_POST['token']) ? $_POST['token'] : '';
+<<<<<<< HEAD
 
         $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
 
         $limit = 10;
 
+=======
+
+        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
+
+        $limit = 10;
+
+>>>>>>> a681ef24fc428c884cf37b53d959b717e90afaae
         $time = 60;
 
         $total = ceil($count / $limit);
