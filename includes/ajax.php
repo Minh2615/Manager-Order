@@ -14,6 +14,7 @@ class ManagerOrderAjax {
 
     public function __construct(){
         self::init();
+        //ok
     }
 
     public function init() {
