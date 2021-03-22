@@ -627,17 +627,13 @@ jQuery(document).ready(function($){
                 console.log(result);
                 var data_name = result.data.name;
                 var data_token = result.data.token;
-<<<<<<< HEAD
-                //var current = new Date(jQuery.now());
-=======
                 var current = new Date(jQuery.now());
->>>>>>> a681ef24fc428c884cf37b53d959b717e90afaae
                 window.localStorage.removeItem('name_file' );
                 window.localStorage.removeItem('app_token' );
                 var file_name = window.localStorage.setItem("name_file", data_name );
                 var app_token = window.localStorage.setItem("app_token", data_token );
                 
-<<<<<<< HEAD
+
                 if(result.data.name !== ""){
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
@@ -647,21 +643,10 @@ jQuery(document).ready(function($){
                 }else{
                     swal({title:"File Empty", type: 
                         "error"}).then(function(){ 
-=======
-                //if(result.data.code === 1){
-                    swal({title: "Success", type: 
-                        "success"}).then(function(){ 
->>>>>>> a681ef24fc428c884cf37b53d959b717e90afaae
                             location.reload();
                         }
                     );
-                // }else{
-                //     swal({title:"Error", type: 
-                //         "error"}).then(function(){ 
-                //             location.reload();
-                //         }
-                //     );
-                // }               
+                }               
             },
             error: function(xhr){
                 swal({title: "Error", type: 
@@ -682,11 +667,8 @@ jQuery(document).ready(function($){
         });
         var name_file = window.localStorage.getItem("name_file");   
         var token =  window.localStorage.getItem("app_token");   
-<<<<<<< HEAD
-=======
         console.log(name_file);
         console.log(token);
->>>>>>> a681ef24fc428c884cf37b53d959b717e90afaae
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
