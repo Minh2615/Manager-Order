@@ -665,8 +665,6 @@ jQuery(document).ready(function($){
         });
         var name_file = window.localStorage.getItem("name_file");   
         var token =  window.localStorage.getItem("app_token");   
-        console.log(name_file);
-        console.log(token);
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
