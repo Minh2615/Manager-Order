@@ -33,7 +33,7 @@
         <button type="button" class="btn btn-success get_token"><?php echo __( 'Get Token', 'order_sandbox' ); ?></button>
     </div>
 </div>
-<div class="container-fluid list_client_id mt-5">
+<div class="container-fluid list_client_id mt-5 table-responsive-xl">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -71,11 +71,11 @@
                     <p>CLient ID: <span class="client_id"><?php echo $value->client_id; ?></span></p>
                     <p>CLient Secret: <span><?php echo $value->client_secret; ?></span></p>
                     <p>Token: <span class="token_id"><?php echo $value->access_token; ?></span></p>
-                <td>
+                <td class="order_config">
                     <button type="button" class="btn btn-info get_order">GET</button>
                     <button type="button" class="btn btn-info view_order">VIEW</button>
                 </td>
-                <td>
+                <td class="form_upload">
                     <form class="form-horizontal" action="" method="post"
                         name="frmCSVImport" id="frmCSVImport"
                         enctype="multipart/form-data">
@@ -87,9 +87,10 @@
                         </div>
                     </form>
                 </td>
-                <td>
-                    <textarea class="note_app" name="note_app" cols="20">
-                        <?php echo $value->custom_note; ?>
+                <td class="note_app">
+                    <span class="icon_note_app"><i class="fa fa-pencil-square" aria-hidden="true"></i></span>
+                    <textarea name="note_app" cols="20">
+                        <?php echo $value->note_app; ?>
                     </textarea>
                 </td>
                 <td>

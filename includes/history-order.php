@@ -63,7 +63,6 @@ class HistoryOrder{
         //custom time
         $today=date("Y-m-d");
         $yesterday = date('Y-m-d',strtotime("-1 days"));
-        echo $yesterday;
         if($_GET['time'] == 1){
             $param_time = 'order_time >= "'.$today.'"';
         }else if($_GET['time']==0){

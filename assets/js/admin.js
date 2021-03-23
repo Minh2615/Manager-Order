@@ -696,4 +696,48 @@ jQuery(document).ready(function($){
             },500);
         });
     });
+
+    //note config app
+    jQuery('.icon_note_app').hide();
+    jQuery( "textarea[name='note_app']" ).keyup(function() {
+        jQuery(this).closest('td.note_app').find('.icon_note_app').show();
+    });
+    
+    jQuery(document).on('click','.icon_note_app',function(){
+        var note_order_app = jQuery(this).siblings('textarea[name="note_app"]').val();
+        var client_id = jQuery(this).closest('.row-tk').find('span.client_id').html();
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            type: "post",
+            data: {
+                action: 'save_note_config_app_mpo',
+                client_id : client_id,
+                note_order_app : note_order_app,
+            },
+            success: function(result){ 
+                if(result.data === 1){
+                        swal({title: "Success", type: 
+                            "success"});
+                }else{
+                    swal({title:"Error", type: 
+                        "error"}).then(function(){ 
+                            location.reload();
+                        }
+                    );
+                }               
+            },
+            error: function(xhr){
+                swal({title: "Error", type: 
+                    "error"}).then(function(){ 
+                        location.reload();
+                    }
+                );
+                console.log(xhr.status);
+            },
+        })
+    });
+    $("textarea").each(function(){
+        $(this).val($(this).val().trim());
+    }
+);
 });

@@ -39,6 +39,7 @@ class Mpo_Table{
 		$this->mpo_config();
 		$this->mpo_order();
 		$this->mpo_product();
+		$this->addColumnNoteConfigMpo();
 	}
 
     private function mpo_config() {
@@ -135,5 +136,16 @@ class Mpo_Table{
 
 
 		dbDelta( $sql );
+	}
+
+	private function addColumnNoteConfigMpo() {
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_config';
+
+		$sql = "ALTER TABLE $table_name
+				ADD note_app varchar(255) AFTER name_app";
+
+		$wpdb->query($sql);
 	}
 }

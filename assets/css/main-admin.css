@@ -62,10 +62,10 @@ td.product_name{
 .view_shiping:hover{
 	text-decoration: underline;
 }
-.row_order_note {
+.row_order_note , .note_app {
 	position: relative;
 }
-.icon_note , .icon_note_cc {
+.icon_note , .icon_note_cc , .icon_note_app {
 	position: absolute;
 	font-size: 20px;
 	color: #009fff;
@@ -74,6 +74,9 @@ td.product_name{
 	cursor: pointer;
 	padding: 5px;
 	z-index: 10;
+}
+td.note_app {
+	width: 210px;
 }
 td.state_order span {
 	display: inline-block;
@@ -135,6 +138,7 @@ td.app_info p{
 	font-size: 15px;
 	font-weight: bold;
 }
-td.app_info p span{
+td.app_info p span {
 	font-weight: normal;
+	font-size: 17px;
 }

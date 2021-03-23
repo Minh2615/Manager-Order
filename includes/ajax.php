@@ -47,6 +47,9 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
 		add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
 
+        add_action( 'wp_ajax_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo' ));
+		add_action( 'wp_ajax_nopriv_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo'));
+
         
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -466,6 +469,20 @@ class ManagerOrderAjax {
         die();
     }
 
+    public function save_note_config_app_mpo(){
+
+        global $wpdb;
+
+        $note_order_app = isset($_POST['note_order_app']) ? $_POST['note_order_app'] : '';
+
+        $client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
+
+        $update_note = $wpdb->update($wpdb->prefix.'mpo_config', array('note_app' => $note_order_app) ,array( 'client_id' => $client_id ));
+
+        wp_send_json_success($update_note);
+
+        die();
+    }
     
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
