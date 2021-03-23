@@ -633,16 +633,15 @@ jQuery(document).ready(function($){
                 var file_name = window.localStorage.setItem("name_file", data_name );
                 var app_token = window.localStorage.setItem("app_token", data_token );
                 
-
-                if(result.data.name !== ""){
-                    swal({title: "Success", type: 
-                        "success"}).then(function(){ 
+                if(result.data.code === false){
+                    swal({title:"Import Database Error", type: 
+                        "error"}).then(function(){ 
                             location.reload();
                         }
                     );
                 }else{
-                    swal({title:"File Empty", type: 
-                        "error"}).then(function(){ 
+                    swal({title: "Success", type: 
+                        "success"}).then(function(){ 
                             location.reload();
                         }
                     );

@@ -46,11 +46,11 @@ class Mpo_Table{
 		$table_name = $this->_wpdb->prefix . 'mpo_config';
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-				name_app varchar(255),
-				client_id varchar(255),
-				client_secret varchar(255),
-				redirect_uri  varchar(255),
-                access_token  varchar(255),
+				name_app varchar(255) NOT NULL,
+				client_id varchar(255) NOT NULL,
+				client_secret varchar(255) NOT NULL,
+				redirect_uri  varchar(255) NOT NULL,
+                access_token  varchar(255) NOT NULL,
                 PRIMARY KEY  (client_id)
 			) " . $this->_charset_collate . ';';
 
@@ -108,28 +108,28 @@ class Mpo_Table{
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                product_sku varchar(255),
-				product_name varchar(255),
-				access_token varchar(255),
-				name_file varchar(255),
-				product_parent varchar(255),
-				product_des varchar(255),
-				product_price varchar(255),
-				product_img varchar(255),
-				product_shipping varchar(255),
-				shipping_time varchar(255),
+                product_sku varchar(255) NOT NULL,
+				product_name varchar(255) NOT NULL,
+				access_token varchar(255) NOT NULL,
+				name_file varchar(255) NOT NULL,
+				product_parent varchar(255) NOT NULL,
+				product_des varchar(255) NOT NULL,
+				product_price varchar(255) NOT NULL,
+				product_img varchar(255) NOT NULL,
+				product_shipping varchar(255) NOT NULL,
+				shipping_time varchar(255) NOT NULL,
 				landing_page_url varchar(255),
-				product_upc varchar(255),
-				merchant_name varchar(255),
-				declared_name varchar(255),
-				declared_local_name varchar(255),
+				product_upc varchar(255) NOT NULL,
+				merchant_name varchar(255) NOT NULL,
+				declared_name varchar(255) NOT NULL,
+				declared_local_name varchar(255) NOT NULL,
 				localized_shipping text,
 				product_pieces bigint(20),
 				product_color text,
-				product_size text,
-				product_quantity bigint(20),
-				product_tags varchar(255),
-				localized_currency_code text,
+				product_size text NOT NULL,
+				product_quantity bigint(20) NOT NULL,
+				product_tags varchar(255) NOT NULL,
+				localized_currency_code text NOT NULL,
 				PRIMARY KEY (id)
 			) " . $this->_charset_collate . ';';
 

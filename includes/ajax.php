@@ -351,9 +351,8 @@ class ManagerOrderAjax {
                     'product_img'=> $column[19],
                );
 
-                $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
-                //$wpdb->insert_id;
-            
+                $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
+                $result['code'] = $import;
             }
         }
         $result['token'] = $token;
