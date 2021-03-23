@@ -624,7 +624,6 @@ jQuery(document).ready(function($){
             processData: false,
             contentType: false,
             success: function(result){ 
-                console.log(result);
                 var data_name = result.data.name;
                 var data_token = result.data.token;
                 var current = new Date(jQuery.now());
