@@ -131,7 +131,7 @@ class ManagerOrder{
 		wp_enqueue_style( 'mo-phys-bootstrap', MO_PHYS_URL . 'assets/css/bootstrap.min.css', array(), '4.3.1' );
         wp_enqueue_style( 'mo-phys-swee-css', MO_PHYS_URL . 'assets/css/sweetalert2.min.css', array(), '7.2.0' );
         wp_enqueue_style( 'mo-phys-font-css', MO_PHYS_URL . 'assets/css/font-awesome.min.css', array(), '4.7.0' );
-        wp_enqueue_style( 'mo-phys-admin-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(), '1.0.0' );
+        wp_enqueue_style( 'mo-phys-admin-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(),$v_rand);
 		//wp_register_style( 'gmc-phys-main-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(), '1.0.0' );
 
 		// script
