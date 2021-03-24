@@ -658,40 +658,6 @@ jQuery(document).ready(function($){
         });
     });
 
-    //upload product 
-    jQuery(document).on('click','.upload_product', function(){
-        $(document).ajaxSend(function() {
-            $("#overlay").fadeIn(300);　
-        });
-        var name_file = window.localStorage.getItem("name_file");   
-        var token =  window.localStorage.getItem("app_token");   
-        jQuery.ajax({
-            url : mo_localize_script.ajaxurl,
-            type: "post",
-            data: {
-                action:'auto_upload_product_merchant',
-                name_file: name_file,
-                token : token,
-            },
-            success: function(result){
-                console.log(result);
-                swal({title: "Success", type: 
-                        "success"}).then(function(){ 
-                            window.localStorage.removeItem('name_file');
-                            window.localStorage.removeItem('token');
-                            location.reload();
-                        }
-                    );
-            },
-            error: function(xhr){
-                console.log(xhr.status);
-            },
-        }).done(function() {
-            setTimeout(function(){
-              $("#overlay").fadeOut(300);
-            },500);
-        });
-    });
 
     //note config app
     jQuery('.icon_note_app').hide();

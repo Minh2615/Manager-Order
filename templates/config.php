@@ -95,7 +95,6 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info upload_product"><i class="fa fa-upload" aria-hidden="true"></i></button>
                 </td>
             </tr>
         <?php $i++;} ?>

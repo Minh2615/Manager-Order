@@ -44,8 +44,8 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 
-        add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
-		add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
+        // add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
+		// add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
 
         add_action( 'wp_ajax_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo' ));
 		add_action( 'wp_ajax_nopriv_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo'));
@@ -355,8 +355,10 @@ class ManagerOrderAjax {
                 $result['code'] = $import;
             }
         }
-        $result['token'] = $token;
+
         fclose($file);
+        
+        $result = $this->auto_upload_product_merchant($name,$token);
 
         wp_send_json_success($result);
 
@@ -439,14 +441,14 @@ class ManagerOrderAjax {
 
     }
 
-    public function auto_upload_product_merchant(){
+    public function auto_upload_product_merchant($name_file,$token){
 
         global $wpdb;
 
-        //$name_file = 'logistics_1003.csv';
-        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        // //$name_file = 'logistics_1003.csv';
+        // $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
 
-        $token = isset($_POST['token']) ? $_POST['token'] : '';
+        // $token = isset($_POST['token']) ? $_POST['token'] : '';
         $limit = 10;
         $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
         
@@ -464,8 +466,8 @@ class ManagerOrderAjax {
             $time +=60;
         }
 
-        wp_send_json_success($response);
-        die();
+        return $response;
+
     }
 
     public function save_note_config_app_mpo(){
