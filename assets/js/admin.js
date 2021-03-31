@@ -109,6 +109,7 @@ jQuery(document).ready(function($){
                 client_id : client_id,
             },
             success: function(result){
+                console.log(result);
                 var data = result.data;
                 if(Array.isArray(data.data) && data.data != ''){
                     swal({title: "Success", type: 
@@ -724,7 +725,7 @@ jQuery(document).ready(function($){
                         swal({title: "Success", type: 
                             "success"});
                 }else{
-                    swal({title:"Error", type: 
+                    swal({title: remove_mes , type: 
                         "error"}).then(function(){ 
                             location.reload();
                         }
