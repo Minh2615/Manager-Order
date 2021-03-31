@@ -267,12 +267,14 @@ jQuery(document).ready(function($){
     // remove config app
     jQuery(document).on('click','.btn.remove_app',function(){
         var client_id = jQuery(this).closest('tr.row-tk').find('span.client_id').html();
+        var token = jQuery(this).closest('tr.row-tk').find('span.token_id').html();
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "post",
             data: {
                 action: 'remove_app_config',
                 client_id : client_id,
+                token : token,
             },
             success: function(result){ 
                 if(result.data === 1){
@@ -700,6 +702,47 @@ jQuery(document).ready(function($){
     });
     $("textarea").each(function(){
         $(this).val($(this).val().trim());
-    }
-);
+    });
+    jQuery(document).on('click','.btn.remove_product',function(){
+        $(document).ajaxSend(function() {
+            $("#overlay").fadeIn(300);　
+        });
+        var parent_id = jQuery(this).closest('.content-remove').find('input[name="parent_sku"]').val();
+        var token = jQuery(this).closest('.content-remove').find('input[name="access_token"]').val();
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            type: "post",
+            data: {
+                action: 'remove_product_mpo',
+                parent_id : parent_id,
+                token : token,
+            },
+            success: function(result){ 
+                console.log(result);
+                var remove_mes = result.data.message;
+                if(remove_mes === ""){
+                        swal({title: "Success", type: 
+                            "success"});
+                }else{
+                    swal({title:"Error", type: 
+                        "error"}).then(function(){ 
+                            location.reload();
+                        }
+                    );
+                }               
+            },
+            error: function(xhr){
+                swal({title: "Error", type: 
+                    "error"}).then(function(){ 
+                        location.reload();
+                    }
+                );
+                console.log(xhr.status);
+            },
+        }).done(function() {
+            setTimeout(function(){
+              $("#overlay").fadeOut(300);
+            },500);
+        });
+    });
 });

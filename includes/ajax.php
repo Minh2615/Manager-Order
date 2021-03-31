@@ -44,8 +44,8 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 
-        // add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
-		// add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
+        add_action( 'wp_ajax_remove_product_mpo', array( $this, 'remove_product_mpo' ));
+		add_action( 'wp_ajax_nopriv_remove_product_mpo', array( $this, 'remove_product_mpo'));
 
         add_action( 'wp_ajax_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo' ));
 		add_action( 'wp_ajax_nopriv_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo'));
@@ -295,9 +295,13 @@ class ManagerOrderAjax {
 
         $client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
 
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+
         $update_config = $wpdb->delete($wpdb->prefix.'mpo_config',array('client_id'=>$client_id));
 
         $update_order = $wpdb->delete($wpdb->prefix.'mpo_order',array('client_id'=>$client_id));
+
+        $update_product = $wpdb->delete($wpdb->prefix.'mpo_product',array('access_token'=>$token));
 
         wp_send_json_success($update_config);
         
@@ -485,6 +489,22 @@ class ManagerOrderAjax {
         die();
     }
     
+    public function remove_product_mpo(){
+
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+        $parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : '';
+        $point_remove = 'https://merchant.wish.com/api/v2/product/remove';
+        $request= array(
+            'access_token' =>$token,
+            'parent_sku'=>$parent_id,
+        );
+
+        $respon = $this->request_manager_order($point_remove, $request , 'POST');
+        wp_send_json_success($respon);
+
+        die();
+    }
+
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',
@@ -525,6 +545,8 @@ class ManagerOrderAjax {
         wp_send_json_success($update_note);
         die();
     }
+
+    
     
 }
 
