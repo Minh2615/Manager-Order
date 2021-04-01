@@ -704,6 +704,8 @@ jQuery(document).ready(function($){
     $("textarea").each(function(){
         $(this).val($(this).val().trim());
     });
+
+    //remove products
     jQuery(document).on('click','.btn.remove_product',function(){
         $(document).ajaxSend(function() {
             $("#overlay").fadeIn(300);　
@@ -745,5 +747,91 @@ jQuery(document).ready(function($){
               $("#overlay").fadeOut(300);
             },500);
         });
+    });
+
+    //create camp
+    jQuery(document).on('click','.create_camp',function(){
+        var product_id = jQuery(this).closest('tr.row-tk').find('td.product_sku').html();
+        var img_url = jQuery(this).closest('tr.row-tk').find('td.product_img img').attr('src');
+        var currency_code = jQuery(this).closest('tr.row-tk').find('td.order_currency_code').html();
+        swal({
+            title: 'Create Campaign',
+            html:
+                '<div class="container mt-5 custom_create">' + 
+                '<div class="detail_product">'+
+                '<img src=' + img_url +' width="150" height="150">'+
+                '<h5 class="mt-3"><b>Product Sku:</b> '+ product_id + '</h5></div>'+ 
+                '<div class="form_camp"><div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input type="text" class="form-control" placeholder="Name" name="campaign_name"></div>'+
+                '<div class="custom_date mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input data-toggle="datepicker" type="text" id="#swal-input1" class="form-control" placeholder="End Date" name="end_date_camp"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input type="text" class="form-control" placeholder="Amount max Budget" name="max_budget"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input type="text" class="form-control" placeholder="Amount merchant Budget" name="merchant_budget"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input type="text" class="form-control" placeholder="The amount of budget automatically added to the campaign on the scheduled days" name="scheduled_add_budget_amount"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input type="text" class="form-control" placeholder="Days of the week budget is automatically added to this campaign" name="scheduled_add_budget_days"></div>'+
+                '</div></div>',
+                onOpen: function() {
+                    $('[data-toggle="datepicker"]').datepicker({
+                        startView: 2,
+                        autoHide: true,
+                        inline: true,
+                        zIndex: 999999
+                    });
+                },
+                width:1200,
+                showLoaderOnConfirm: true,
+                confirmButtonText: 'Create',
+                preConfirm: function () {
+                    var campaign_name = jQuery('input[name="campaign_name"]').val();
+                    var end_date = jQuery('input[name="end_date_camp"]').val();
+                    var max_budget = jQuery('input[name="max_budget"]').val();
+                    var merchant_budget = jQuery('input[name="merchant_budget"]').val();
+                    var scheduled_add_budget_amount = jQuery('input[name="scheduled_add_budget_amount"]').val();
+                    var scheduled_add_budget_days = jQuery('input[name="scheduled_add_budget_days"]').val();
+                    
+                    return new Promise(function (resolve) {
+                      jQuery.ajax({
+                        url : mo_localize_script.ajaxurl,
+                        type: "post",
+                        data: {
+                            action: 'create_campaign_mpo',
+                            campaign_name: campaign_name,
+                            product_id : product_id,
+                            end_date : end_date,
+                            max_budget : max_budget,
+                            merchant_budget : merchant_budget,
+                            scheduled_add_budget_amount : scheduled_add_budget_amount,
+                            scheduled_add_budget_days : scheduled_add_budget_days,
+                            currency_code : currency_code
+
+                        },
+                      })
+                      // in case of successfully understood ajax response
+                        .done(function (myAjaxJsonResponse) {
+                          console.log(myAjaxJsonResponse);
+                          swal(
+                            "My title!",
+                            "My response element is: " + myAjaxJsonResponse.selectedElement,
+                            "success"
+                          );
+                        })
+                        .fail(function (erordata) {
+                          console.log(erordata);
+                          swal('cancelled!', 'The action have been cancelled by the user :-)', 'error');
+                        })
+                
+                    })
+                  },
+          })
     });
 });

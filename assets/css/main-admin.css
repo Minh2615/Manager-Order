@@ -142,3 +142,18 @@ td.app_info p span {
 	font-weight: normal;
 	font-size: 17px;
 }
+.container.mt-5.custom_create {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.detail_product {
+	width: 30%;
+}
+.form_camp {
+	width: 65%;
+}
+.custom_date {
+	display: flex;
+	position: relative;
+}

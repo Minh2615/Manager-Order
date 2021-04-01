@@ -40,6 +40,7 @@ class Mpo_Table{
 		$this->mpo_order();
 		$this->mpo_product();
 		$this->addColumnNoteConfigMpo();
+		$this->addColumnNameCampaign();
 	}
 
     private function mpo_config() {
@@ -145,6 +146,17 @@ class Mpo_Table{
 
 		$sql = "ALTER TABLE $table_name
 				ADD note_app varchar(255) AFTER name_app";
+
+		$wpdb->query($sql);
+	}
+
+	private function addColumnNameCampaign() {
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_order';
+
+		$sql = "ALTER TABLE $table_name
+				ADD name_campaign varchar(255) AFTER product_id";
 
 		$wpdb->query($sql);
 	}

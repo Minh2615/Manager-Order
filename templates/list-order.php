@@ -41,7 +41,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                
+                <th scope="col"><?php echo __( 'Campaign', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Date', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order ID', 'order_sandbox' ); ?></th>
@@ -86,6 +86,13 @@
         ?>
             
             <tr class="row-tk">
+                <th scope="row">
+                    <?php if(empty($value->name_campaign)){ ?>
+                        <button type="button" class="btn btn-info create_camp"><?php echo __( 'Create ', 'order_sandbox' ); ?></button>
+                    <?php }else{ ?>
+                        <a href="#"><?php echo $value->name_campaign; ?></a>
+                    <?php } ?>
+                </th>
                 <th scope="row"><?php echo $query_app_name[0]->name_app; ?></th>
                 <th scope="row"><?php echo $value->order_time; ?></th>
                 <td class="order_id"><?php echo $value->order_id; ?></td>

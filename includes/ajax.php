@@ -50,6 +50,8 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo' ));
 		add_action( 'wp_ajax_nopriv_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo'));
 
+        add_action( 'wp_ajax_create_campaign_mpo', array( $this, 'create_campaign_mpo' ));
+		add_action( 'wp_ajax_nopriv_create_campaign_mpo', array( $this, 'create_campaign_mpo'));
         
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -488,6 +490,35 @@ class ManagerOrderAjax {
 
         die();
     }
+
+    public function create_campaign_mpo(){
+
+        $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
+        $campaign_name = isset($_POST['campaign_name']) ? $_POST['campaign_name'] : '';
+        $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
+        $max_budget = isset($_POST['max_budget']) ? $_POST['max_budget'] : '';
+        $merchant_budget = isset($_POST['merchant_budget']) ? $_POST['merchant_budget'] : '';
+        $scheduled_add_budget_amount = isset($_POST['scheduled_add_budget_amount']) ? $_POST['scheduled_add_budget_amount'] : '';
+        $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
+        $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
+        $start_date = date("d-m-Y");
+        $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
+        $request = array(
+            'campaign_name'=>$campaign_name,
+            'auto_renew'=>true,
+            'end_at'=>$end_date,
+            'products'=>array(
+                'product_id'=>$product_id,
+            ),
+            'start_at'=>$start_date,
+           // 'access_token'=>'b0546e5fd1084a9f9917aca535996bab'
+        );
+
+        $respon = $this->request_manager_order($point, $request , 'POST');
+
+        wp_send_json_success($respon);
+        die();
+    }
     
     public function remove_product_mpo(){
 
@@ -508,7 +539,10 @@ class ManagerOrderAjax {
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',
-            'headers'     => array(),
+            'headers'     => array(
+                'Content-Type' => 'application/json',
+                'authorization' => 'Bearer {14cc4786746f4bf88376ffffc90c5a58}',
+            ),
             'body'       => $request,
             'timeout'    => 70,
             'sslverify'  => false,
