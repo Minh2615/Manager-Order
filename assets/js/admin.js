@@ -806,13 +806,13 @@ jQuery(document).ready(function($){
                         data: {
                             action: 'create_campaign_mpo',
                             campaign_name: campaign_name,
-                            product_id : product_id,
-                            end_date : end_date,
-                            max_budget : max_budget,
-                            merchant_budget : merchant_budget,
-                            scheduled_add_budget_amount : scheduled_add_budget_amount,
-                            scheduled_add_budget_days : scheduled_add_budget_days,
-                            currency_code : currency_code
+                            product_id: product_id,
+                            end_date: end_date,
+                            max_budget: max_budget,
+                            merchant_budget: merchant_budget,
+                            scheduled_add_budget_amount: scheduled_add_budget_amount,
+                            scheduled_add_budget_days: scheduled_add_budget_days,
+                            currency_code: currency_code
 
                         },
                       })

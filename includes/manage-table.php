@@ -39,6 +39,7 @@ class Mpo_Table{
 		$this->mpo_config();
 		$this->mpo_order();
 		$this->mpo_product();
+		$this->mpo_campaign();
 		$this->addColumnNoteConfigMpo();
 		$this->addColumnNameCampaign();
 	}
@@ -138,7 +139,9 @@ class Mpo_Table{
 
 		dbDelta( $sql );
 	}
-
+	private function mpo_campaign(){
+		$table_name = $this->_wpdb->prefix . 'mpo_campaign';
+	}
 	private function addColumnNoteConfigMpo() {
 		global $wpdb;
 

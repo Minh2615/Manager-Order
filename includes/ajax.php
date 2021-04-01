@@ -501,19 +501,24 @@ class ManagerOrderAjax {
         $scheduled_add_budget_amount = isset($_POST['scheduled_add_budget_amount']) ? $_POST['scheduled_add_budget_amount'] : '';
         $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
         $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
-        $start_date = date("d-m-Y");
+        $start_date = date("YYYY-MM-DD");
+
         $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
         $request = array(
             'campaign_name'=>$campaign_name,
             'auto_renew'=>true,
-            'end_at'=>$end_date,
+            'end_at'=>'2021-04-11T18:10:31Z',
             'products'=>array(
-                'product_id'=>$product_id,
+                'product_id'=>'6050880633ee6f851332fb87'
             ),
-            'start_at'=>$start_date,
+            'merchant_budget'=>array(
+                'amount'=> 1.4,
+                "currency_code"=>$currency_code
+            ),
+            'start_at'=>'2021-04-11T00:10:31Z',
            // 'access_token'=>'b0546e5fd1084a9f9917aca535996bab'
         );
-
+        
         $respon = $this->request_manager_order($point, $request , 'POST');
 
         wp_send_json_success($respon);
@@ -540,12 +545,13 @@ class ManagerOrderAjax {
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',
             'headers'     => array(
+                'authorization' => 'Bearer 8fa3dc5807fb43e5b316c7a97ea807a0' ,
                 'Content-Type' => 'application/json',
-                'authorization' => 'Bearer {14cc4786746f4bf88376ffffc90c5a58}',
             ),
-            'body'       => $request,
+            'body'       => "{\"auto_renew\":true,\"campaign_name\":\"gdfgfd\",\"end_at\":\"2021-04-09T18:10:31Z\",\"intense_boost\":true,\"max_budget\":{\"amount\":10.4,\"currency_code\":\"USD\"},\"merchant_budget\":{\"amount\":20.4,\"currency_code\":\"USD\"},\"products\":[{\"product_id\":\"6050880633ee6f851332fb87\"}],\"scheduled_add_budget_amount\":{\"amount\":1.0,\"currency_code\":\"USD\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"2021-04-04T08:10:31Z\"}",
             'timeout'    => 70,
             'sslverify'  => false,
+            'data_format' => 'body',
         ) );
 
         $parsed_response = json_decode( $response['body'] );
