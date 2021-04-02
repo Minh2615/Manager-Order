@@ -86,15 +86,17 @@
         ?>
             
             <tr class="row-tk">
-                <th scope="row">
+                <td scope="row">
                     <?php if(empty($value->name_campaign)){ ?>
                         <button type="button" class="btn btn-info create_camp"><?php echo __( 'Create ', 'order_sandbox' ); ?></button>
                     <?php }else{ ?>
                         <a href="#"><?php echo $value->name_campaign; ?></a>
                     <?php } ?>
-                </th>
-                <th scope="row"><?php echo $query_app_name[0]->name_app; ?></th>
-                <th scope="row"><?php echo $value->order_time; ?></th>
+                </td>
+                <td class="access_token" style="display:none"><?php echo $value->access_token; ?></td>
+                <td class="product_id_camp" style="display:none"><?php echo $value->product_id_camp; ?></td>
+                <td scope="row"><?php echo $query_app_name[0]->name_app; ?></td>
+                <td scope="row"><?php echo $value->order_time; ?></td>
                 <td class="order_id"><?php echo $value->order_id; ?></td>
                 <td class="day_to_ful ful_<?php echo $i; ?>">
                     <span>

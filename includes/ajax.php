@@ -204,6 +204,7 @@ class ManagerOrderAjax {
                     'shipping_city' => $value->Order->ShippingDetail->city,
                     'shipped_date' => $value->Order->shipped_date,
                     'tracking_confirmed' => $value->Order->tracking_confirmed,
+                    'product_id_camp'=>$value->Order->product_id,
                 ));
             }else{
                 $wpdb->update($wpdb->prefix.'mpo_order',
@@ -492,8 +493,9 @@ class ManagerOrderAjax {
     }
 
     public function create_campaign_mpo(){
-
-        $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
+        global $wpdb;
+        //$product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
+        $product_id = '6050880633ee6f851332fb87';
         $campaign_name = isset($_POST['campaign_name']) ? $_POST['campaign_name'] : '';
         $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
         $max_budget = isset($_POST['max_budget']) ? $_POST['max_budget'] : '';
@@ -502,26 +504,65 @@ class ManagerOrderAjax {
         $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
         $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
         $start_date = date("YYYY-MM-DD");
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
 
         $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
-        $request = array(
-            'campaign_name'=>$campaign_name,
-            'auto_renew'=>true,
-            'end_at'=>'2021-04-11T18:10:31Z',
-            'products'=>array(
-                'product_id'=>'6050880633ee6f851332fb87'
-            ),
-            'merchant_budget'=>array(
-                'amount'=> 1.4,
-                "currency_code"=>$currency_code
-            ),
-            'start_at'=>'2021-04-11T00:10:31Z',
-           // 'access_token'=>'b0546e5fd1084a9f9917aca535996bab'
-        );
         
-        $respon = $this->request_manager_order($point, $request , 'POST');
+        $response = wp_remote_post( $point , array(
+            'method'     => 'POST',
+            'headers'     => array(
+                'authorization' => 'Bearer 8fa3dc5807fb43e5b316c7a97ea807a0' ,
+                'Content-Type' => 'application/json',
+            ),
+            'body'       => "{\"auto_renew\":true,\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"2021-04-09T18:10:31Z\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"USD\"},\"merchant_budget\":{\"amount\":20.4,\"currency_code\":\"USD\"},\"products\":[{\"product_id\":\"6050880633ee6f851332fb87\"}],\"scheduled_add_budget_amount\":{\"amount\":1.0,\"currency_code\":\"USD\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"2021-04-04T08:10:31Z\"}",
+            'timeout'    => 70,
+            'sslverify'  => false,
+            'data_format' => 'body',
+        ) );
 
-        wp_send_json_success($respon);
+        $parsed_response = json_decode( $response['body'] );
+        
+        $data = $parsed_response->data;
+
+        $arr_insert = array(
+            'campaign_name'=>$data->campaign_name,
+            'auto_renew'=>$data->auto_renew,
+            'access_token' => $token,
+            'amount_bonus_budget'=> $data->bonus_budget->amount,
+            'currency_code'=> $currency_code,
+            'bonus_budget_spend'=> $data->bonus_budget_spend->amount,
+            'end_at'=> $data->end_at,
+            'amount_gmv'=> $data->gmv->amount,
+            'camp_id'=> $data->id,
+            'intense_boost'=> $data->intense_boost,
+            'is_automated_campaign'=> $data->is_automated_campaign,
+            'amount_max_budget'=> $data->max_budget->amount,
+            'merchant_budget'=> $data->merchant_budget->amount,
+            'merchant_id'=> $data->merchant_id,
+            'amount_min_spend'=> $data->min_spend->amount,
+            'paid_impressions'=> $data->paid_impressions,
+            'product_id'=> $product_id,
+            'keywords' => $data->products[0]->keywords,
+            'amount_enrollment_fee'=>$data->products[0]->enrollment_fee->amount,
+            'is_maxboost'=> $data->products[0]->is_maxboost,
+            'sales'=>$data->sales,
+            'scheduled_add_budget_amount'=> $data->scheduled_add_budget_amount->amount,
+            'scheduled_add_budget_days'=> $data->scheduled_add_budget_days,
+            'start_at'=> $data->start_at,
+            'state_camp'=> $data->state,
+            'total_campaign_spend'=>$data->total_campaign_spend->amount,
+            'total_enrollment_fees'=>$data->total_enrollment_fees->amount,
+            'total_impression_fees_charged'=>$data->total_impression_fees_charged->amount,
+            'total_impressions'=>$data->total_impressions,
+            'type_camp'=>$data->type,
+            'updated_at'=>$data->updated_at,
+       );
+
+        $import = $wpdb->insert($wpdb->prefix . 'mpo_campaign',$arr_insert);
+
+
+        wp_send_json_success($data);
+
         die();
     }
     
@@ -540,15 +581,12 @@ class ManagerOrderAjax {
 
         die();
     }
-
+    
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',
-            'headers'     => array(
-                'authorization' => 'Bearer 8fa3dc5807fb43e5b316c7a97ea807a0' ,
-                'Content-Type' => 'application/json',
-            ),
-            'body'       => "{\"auto_renew\":true,\"campaign_name\":\"gdfgfd\",\"end_at\":\"2021-04-09T18:10:31Z\",\"intense_boost\":true,\"max_budget\":{\"amount\":10.4,\"currency_code\":\"USD\"},\"merchant_budget\":{\"amount\":20.4,\"currency_code\":\"USD\"},\"products\":[{\"product_id\":\"6050880633ee6f851332fb87\"}],\"scheduled_add_budget_amount\":{\"amount\":1.0,\"currency_code\":\"USD\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"2021-04-04T08:10:31Z\"}",
+            'headers'     => array(),
+            'body'       => $request,
             'timeout'    => 70,
             'sslverify'  => false,
             'data_format' => 'body',

@@ -42,6 +42,7 @@ class Mpo_Table{
 		$this->mpo_campaign();
 		$this->addColumnNoteConfigMpo();
 		$this->addColumnNameCampaign();
+		$this->addColumnProductIdCamp();
 	}
 
     private function mpo_config() {
@@ -141,6 +142,46 @@ class Mpo_Table{
 	}
 	private function mpo_campaign(){
 		$table_name = $this->_wpdb->prefix . 'mpo_campaign';
+
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			campaign_name varchar(255) NOT NULL,
+			auto_renew BOOLEAN ,
+			access_token varchar(255) NOT NULL,
+			amount_bonus_budget FLOAT,
+			currency_code varchar(255) NOT NULL,
+			bonus_budget_spend FLOAT,
+			end_at varchar(255) NOT NULL,
+			amount_gmv FLOAT,
+			camp_id varchar(255) NOT NULL,
+			intense_boost BOOLEAN,
+			is_automated_campaign BOOLEAN,
+			amount_max_budget FLOAT,
+			merchant_budget FLOAT,
+			merchant_id varchar(255),
+			amount_min_spend FLOAT,
+			paid_impressions bigint(20),
+			product_id varchar(255),
+			keywords varchar(255),
+			amount_enrollment_fee FLOAT,
+			is_maxboost BOOLEAN,
+			sales bigint(20),
+			scheduled_add_budget_amount FLOAT,
+			scheduled_add_budget_days varchar(255),
+			start_at varchar(255),
+			state_camp varchar(255),
+			total_campaign_spend FLOAT,
+			total_enrollment_fees FLOAT,
+			total_impression_fees_charged FLOAT,
+			total_impressions text,
+			type_camp varchar(255),
+			updated_at varchar(255),
+			PRIMARY KEY (id)
+		) " . $this->_charset_collate . ';';
+
+
+
+	dbDelta( $sql );
 	}
 	private function addColumnNoteConfigMpo() {
 		global $wpdb;
@@ -160,6 +201,17 @@ class Mpo_Table{
 
 		$sql = "ALTER TABLE $table_name
 				ADD name_campaign varchar(255) AFTER product_id";
+
+		$wpdb->query($sql);
+	}
+
+	private function addColumnProductIdCamp() {
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_order';
+
+		$sql = "ALTER TABLE $table_name
+				ADD product_id_camp varchar(255) AFTER product_name";
 
 		$wpdb->query($sql);
 	}

@@ -751,9 +751,10 @@ jQuery(document).ready(function($){
 
     //create camp
     jQuery(document).on('click','.create_camp',function(){
-        var product_id = jQuery(this).closest('tr.row-tk').find('td.product_sku').html();
+        var product_id = jQuery(this).closest('tr.row-tk').find('td.product_id_camp').html();
         var img_url = jQuery(this).closest('tr.row-tk').find('td.product_img img').attr('src');
         var currency_code = jQuery(this).closest('tr.row-tk').find('td.order_currency_code').html();
+        var token = jQuery(this).closest('tr.row-tk').find('td.access_token').html();
         swal({
             title: 'Create Campaign',
             html:
@@ -806,6 +807,7 @@ jQuery(document).ready(function($){
                         data: {
                             action: 'create_campaign_mpo',
                             campaign_name: campaign_name,
+                            token: token,
                             product_id: product_id,
                             end_date: end_date,
                             max_budget: max_budget,
@@ -813,7 +815,6 @@ jQuery(document).ready(function($){
                             scheduled_add_budget_amount: scheduled_add_budget_amount,
                             scheduled_add_budget_days: scheduled_add_budget_days,
                             currency_code: currency_code
-
                         },
                       })
                       // in case of successfully understood ajax response
