@@ -143,7 +143,7 @@ class ManagerOrder{
     }
 
     public function mpo_list_campaign_callback(){
-        require_once plugin_dir_path(__FILE__).'/templates/list-camp.php';
+        require_once plugin_dir_path(__FILE__).'/includes/custom-camp.php';
     }
     
     function load_enqueue_scripts_on_admin() {
