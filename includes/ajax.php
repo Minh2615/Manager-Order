@@ -498,23 +498,26 @@ class ManagerOrderAjax {
         $product_id = '6050880633ee6f851332fb87';
         $campaign_name = isset($_POST['campaign_name']) ? $_POST['campaign_name'] : '';
         $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
+        $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : '';
         $max_budget = isset($_POST['max_budget']) ? $_POST['max_budget'] : '';
         $merchant_budget = isset($_POST['merchant_budget']) ? $_POST['merchant_budget'] : '';
         $scheduled_add_budget_amount = isset($_POST['scheduled_add_budget_amount']) ? $_POST['scheduled_add_budget_amount'] : '';
         $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
         $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
-        $start_date = date("YYYY-MM-DD");
-        $token = isset($_POST['token']) ? $_POST['token'] : '';
+        //$token = isset($_POST['token']) ? $_POST['token'] : '';
+        $token = '8fa3dc5807fb43e5b316c7a97ea807a0';
 
+        $end_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($end_date));
+        $start_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($start_date));
         $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
-        
+
         $response = wp_remote_post( $point , array(
             'method'     => 'POST',
             'headers'     => array(
-                'authorization' => 'Bearer 8fa3dc5807fb43e5b316c7a97ea807a0' ,
+                'authorization' => 'Bearer '.$token ,
                 'Content-Type' => 'application/json',
             ),
-            'body'       => "{\"auto_renew\":true,\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"2021-04-09T18:10:31Z\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"USD\"},\"merchant_budget\":{\"amount\":20.4,\"currency_code\":\"USD\"},\"products\":[{\"product_id\":\"6050880633ee6f851332fb87\"}],\"scheduled_add_budget_amount\":{\"amount\":1.0,\"currency_code\":\"USD\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"2021-04-04T08:10:31Z\"}",
+            'body'       => "{\"auto_renew\":true,\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\"}",
             'timeout'    => 70,
             'sslverify'  => false,
             'data_format' => 'body',
@@ -561,7 +564,7 @@ class ManagerOrderAjax {
         $import = $wpdb->insert($wpdb->prefix . 'mpo_campaign',$arr_insert);
 
 
-        wp_send_json_success($data);
+        wp_send_json_success($parsed_response);
 
         die();
     }

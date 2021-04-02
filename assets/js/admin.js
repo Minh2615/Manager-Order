@@ -761,13 +761,16 @@ jQuery(document).ready(function($){
                 '<div class="container mt-5 custom_create">' + 
                 '<div class="detail_product">'+
                 '<img src=' + img_url +' width="150" height="150">'+
-                '<h5 class="mt-3"><b>Product Sku:</b> '+ product_id + '</h5></div>'+ 
+                '<h5 class="mt-3"><b>Product ID:</b> '+ product_id + '</h5></div>'+ 
                 '<div class="form_camp"><div class="input-group mb-3 col-lg-12">' +
                 '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
                 '<input type="text" class="form-control" placeholder="Name" name="campaign_name"></div>'+
                 '<div class="custom_date mb-3 col-lg-12">' +
                 '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
-                '<input data-toggle="datepicker" type="text" id="#swal-input1" class="form-control" placeholder="End Date" name="end_date_camp"></div>'+
+                '<input data-toggle="datepicker_start" type="text" id="#swal-input2" class="form-control" placeholder="Start Date" name="start_date_camp"></div>'+
+                '<div class="custom_date mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                '<input data-toggle="datepicker_end" type="text" id="#swal-input1" class="form-control" placeholder="End Date" name="end_date_camp"></div>'+
                 '<div class="input-group mb-3 col-lg-12">' +
                 '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
                 '<input type="text" class="form-control" placeholder="Amount max Budget" name="max_budget"></div>'+
@@ -777,12 +780,20 @@ jQuery(document).ready(function($){
                 '<div class="input-group mb-3 col-lg-12">' +
                 '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
                 '<input type="text" class="form-control" placeholder="The amount of budget automatically added to the campaign on the scheduled days" name="scheduled_add_budget_amount"></div>'+
-                '<div class="input-group mb-3 col-lg-12">' +
-                '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
-                '<input type="text" class="form-control" placeholder="Days of the week budget is automatically added to this campaign" name="scheduled_add_budget_days"></div>'+
+                // '<div class="input-group mb-3 col-lg-12">' +
+                // '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                // '<input type="text" class="form-control" placeholder="Days of the week budget is automatically added to this campaign" name="scheduled_add_budget_days"></div>'+
                 '</div></div>',
                 onOpen: function() {
-                    $('[data-toggle="datepicker"]').datepicker({
+                    $('[data-toggle="datepicker_start"]').datepicker({
+                        dateFormat:'yy-mm-dd',
+                        startView: 2,
+                        autoHide: true,
+                        inline: true,
+                        zIndex: 999999
+                    });
+                    $('[data-toggle="datepicker_end"]').datepicker({
+                        dateFormat:'yy-mm-dd',
                         startView: 2,
                         autoHide: true,
                         inline: true,
@@ -795,6 +806,7 @@ jQuery(document).ready(function($){
                 preConfirm: function () {
                     var campaign_name = jQuery('input[name="campaign_name"]').val();
                     var end_date = jQuery('input[name="end_date_camp"]').val();
+                    var start_date = jQuery('input[name="start_date_camp"]').val();
                     var max_budget = jQuery('input[name="max_budget"]').val();
                     var merchant_budget = jQuery('input[name="merchant_budget"]').val();
                     var scheduled_add_budget_amount = jQuery('input[name="scheduled_add_budget_amount"]').val();
@@ -810,6 +822,7 @@ jQuery(document).ready(function($){
                             token: token,
                             product_id: product_id,
                             end_date: end_date,
+                            start_date: start_date,
                             max_budget: max_budget,
                             merchant_budget: merchant_budget,
                             scheduled_add_budget_amount: scheduled_add_budget_amount,
@@ -817,14 +830,17 @@ jQuery(document).ready(function($){
                             currency_code: currency_code
                         },
                       })
-                      // in case of successfully understood ajax response
-                        .done(function (myAjaxJsonResponse) {
-                          console.log(myAjaxJsonResponse);
-                          swal(
-                            "My title!",
-                            "My response element is: " + myAjaxJsonResponse.selectedElement,
-                            "success"
-                          );
+                        .done(function (rs) {
+                            console.log(rs);
+                            if(rs.data.message){
+                                swal.hideLoading();
+                                swal.showValidationError(
+                                    'Request failed:'+rs.data.message
+                                )
+                            }else{
+                                swal({title: "Create Success", type: 
+                                "success"});
+                            }    
                         })
                         .fail(function (erordata) {
                           console.log(erordata);

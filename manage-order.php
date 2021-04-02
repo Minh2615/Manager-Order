@@ -117,6 +117,14 @@ class ManagerOrder{
             'mpo_remove_product',
             array($this,'mpo_remove_products_callback'),
         );
+        add_submenu_page( 
+            'manager_order',
+            __( 'Campaign', 'order_sandbox' ),
+            __( 'Campaign', 'order_sandbox' ),
+            'manage_options',
+            'mpo_list_campaign',
+            array($this,'mpo_list_campaign_callback'),
+        );
     }
 
     public function mpo_config_callback(){
@@ -132,6 +140,10 @@ class ManagerOrder{
 
     public function mpo_order_history_callback(){
         require_once plugin_dir_path(__FILE__).'/includes/history-order.php';
+    }
+
+    public function mpo_list_campaign_callback(){
+        require_once plugin_dir_path(__FILE__).'/templates/list-camp.php';
     }
     
     function load_enqueue_scripts_on_admin() {
