@@ -109,14 +109,7 @@ class ManagerOrder{
             'mpo_order_history',
             array($this,'mpo_order_history_callback'),
         );
-        add_submenu_page( 
-            'manager_order',
-            __( 'Remove Product', 'order_sandbox' ),
-            __( 'Remove Product', 'order_sandbox' ),
-            'manage_options',
-            'mpo_remove_product',
-            array($this,'mpo_remove_products_callback'),
-        );
+
         add_submenu_page( 
             'manager_order',
             __( 'Campaign', 'order_sandbox' ),
@@ -125,6 +118,16 @@ class ManagerOrder{
             'mpo_list_campaign',
             array($this,'mpo_list_campaign_callback'),
         );
+
+        add_submenu_page( 
+            'manager_order',
+            __( 'Remove Product', 'order_sandbox' ),
+            __( 'Remove Product', 'order_sandbox' ),
+            'manage_options',
+            'mpo_remove_product',
+            array($this,'mpo_remove_products_callback'),
+        );
+        
     }
 
     public function mpo_config_callback(){
@@ -169,6 +172,7 @@ class ManagerOrder{
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
                 'page_order'=>get_site_url() .'/wp-admin/admin.php?page=mpo_list_order',
                 'page_history'=>get_site_url() .'/wp-admin/admin.php?page=mpo_order_history',
+                'page_camp'=>get_site_url() .'/wp-admin/admin.php?page=mpo_list_campaign',
             )
         );  
 	}

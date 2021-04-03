@@ -52,6 +52,10 @@ class ManagerOrderAjax {
 
         add_action( 'wp_ajax_create_campaign_mpo', array( $this, 'create_campaign_mpo' ));
 		add_action( 'wp_ajax_nopriv_create_campaign_mpo', array( $this, 'create_campaign_mpo'));
+
+        add_action( 'wp_ajax_get_campaign_by_token_mpo', array( $this, 'get_campaign_by_token_mpo' ));
+		add_action( 'wp_ajax_nopriv_get_campaign_by_token_mpo', array( $this, 'get_campaign_by_token_mpo'));
+
         
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -62,6 +66,8 @@ class ManagerOrderAjax {
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
         add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
+
+
 
 
 	}
@@ -527,12 +533,61 @@ class ManagerOrderAjax {
         
         $data = $parsed_response->data;
 
+        $this->insert_data_campaign_mpo($data , $token);
+
+        wp_send_json_success($parsed_response);
+
+        die();
+    }
+    
+ 
+    public function get_campaign_by_token_mpo(){
+        global $wpdb;
+        
+        //$token = isset($_POST['token']) ? $_POST['token'] : '';
+
+        $token = '8fa3dc5807fb43e5b316c7a97ea807a0';
+        $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
+
+        $response = wp_remote_post( $point , array(
+            'method'     => 'GET',
+            'headers'     => array(
+                'authorization' => 'Bearer '.$token ,
+                'Content-Type' => 'application/json',
+            ),
+            'timeout'    => 70,
+            'sslverify'  => false,
+            'data_format' => 'body',
+        ) );
+
+        $parsed_response = json_decode( $response['body'] );
+        
+        $data = $parsed_response->data;
+        foreach($data as $value){
+            $this->insert_data_campaign_mpo($value , $token);
+        }
+
+        wp_send_json_success($parsed_response);
+
+        die();
+    }
+
+    public function insert_data_campaign_mpo($data , $token){
+        global $wpdb;
+        
+        $list_camp = array();
+
+        $arr_camp = $wpdb->get_results("SELECT camp_id FROM {$wpdb->prefix}mpo_campaign");
+
+        foreach($arr_camp as $value){
+            $list_camp[] = $value->camp_id;
+        }
         $arr_insert = array(
             'campaign_name'=>$data->campaign_name,
             'auto_renew'=>$data->auto_renew,
             'access_token' => $token,
             'amount_bonus_budget'=> $data->bonus_budget->amount,
-            'currency_code'=> $currency_code,
+            'currency_code'=> $data->products[0]->enrollment_fee->currency_code,
             'bonus_budget_spend'=> $data->bonus_budget_spend->amount,
             'end_at'=> $data->end_at,
             'amount_gmv'=> $data->gmv->amount,
@@ -544,7 +599,7 @@ class ManagerOrderAjax {
             'merchant_id'=> $data->merchant_id,
             'amount_min_spend'=> $data->min_spend->amount,
             'paid_impressions'=> $data->paid_impressions,
-            'product_id'=> $product_id,
+            'product_id'=> $data->products[0]->product_id,
             'keywords' => $data->products[0]->keywords,
             'amount_enrollment_fee'=>$data->products[0]->enrollment_fee->amount,
             'is_maxboost'=> $data->products[0]->is_maxboost,
@@ -560,15 +615,14 @@ class ManagerOrderAjax {
             'type_camp'=>$data->type,
             'updated_at'=>$data->updated_at,
        );
+        if(!in_array($data->id , $list_camp)){
+            $wpdb->insert($wpdb->prefix . 'mpo_campaign',$arr_insert);
+        }else{
+            $wpdb->update($wpdb->prefix . 'mpo_campaign',$arr_insert, array('camp_id'=>$data->id));
+        }
 
-        $import = $wpdb->insert($wpdb->prefix . 'mpo_campaign',$arr_insert);
-
-
-        wp_send_json_success($parsed_response);
-
-        die();
     }
-    
+
     public function remove_product_mpo(){
 
         $token = isset($_POST['token']) ? $_POST['token'] : '';
@@ -584,7 +638,7 @@ class ManagerOrderAjax {
 
         die();
     }
-    
+
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(
             'method'     => $method ? $method : 'GET',

@@ -43,6 +43,7 @@
                 <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Products', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Notes', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Camps', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Actions', 'order_sandbox' ); ?></th>
             </tr>
         </thead>
@@ -92,6 +93,10 @@
                     <textarea name="note_app" cols="20">
                         <?php echo $value->note_app; ?>
                     </textarea>
+                </td>
+                <td class="camp_config">
+                    <button type="button" class="btn btn-info get_camp">GET</button>
+                    <button type="button" class="btn btn-info view_camp">VIEW</button>
                 </td>
                 <td>
                     <button type="button" class="btn btn-info remove_app"><i class="fa fa-trash" aria-hidden="true"></i></button>

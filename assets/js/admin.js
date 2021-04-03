@@ -827,7 +827,7 @@ jQuery(document).ready(function($){
                             merchant_budget: merchant_budget,
                             scheduled_add_budget_amount: scheduled_add_budget_amount,
                             scheduled_add_budget_days: scheduled_add_budget_days,
-                            currency_code: currency_code
+                            currency_code: currency_code,
                         },
                       })
                         .done(function (rs) {
@@ -851,4 +851,54 @@ jQuery(document).ready(function($){
                   },
           })
     });
+
+    // get camp by token
+    jQuery(document).on('click','.get_camp',function(){
+        $(document).ajaxSend(function() {
+            $("#overlay").fadeIn(300);　
+        });
+        var token = jQuery(this).closest('tr.row-tk').find('span.token_id').html();
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            type: "post",
+            data: {
+                action: 'get_campaign_by_token_mpo',
+                token : token,
+            },
+            success: function(result){ 
+                console.log(result);
+                var remove_mes = result.data.message;
+                if(remove_mes === ""){
+                        swal({title: "Success", type: 
+                            "success"});
+                }else{
+                    swal({title: remove_mes , type: 
+                        "error"}).then(function(){ 
+                            location.reload();
+                        }
+                    );
+                }               
+            },
+            error: function(xhr){
+                swal({title: "Error", type: 
+                    "error"}).then(function(){ 
+                        location.reload();
+                    }
+                );
+                console.log(xhr.status);
+            },
+        }).done(function() {
+            setTimeout(function(){
+              $("#overlay").fadeOut(300);
+            },500);
+        });
+    });
+
+
+    // view camp
+    jQuery(document).on('click','.view_camp',function(){
+        var token = jQuery(this).closest('tr.row-tk').find('span.token_id').html();
+        var url_camp =  mo_localize_script.page_camp+'&token='+token;
+        window.location.href = url_camp;
+    })
 });
