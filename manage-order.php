@@ -158,6 +158,7 @@ class ManagerOrder{
         wp_enqueue_style( 'mo-phys-jquery-ui-css', MO_PHYS_URL . 'assets/css/jquery-ui.min.css', array(), '1.12.1' );
         wp_enqueue_style( 'mo-phys-swee-css', MO_PHYS_URL . 'assets/css/sweetalert2.min.css', array(), '7.2.0' );
         wp_enqueue_style( 'mo-phys-font-css', MO_PHYS_URL . 'assets/css/font-awesome.min.css', array(), '4.7.0' );
+        wp_enqueue_style( 'mo-phys-toggle-css', MO_PHYS_URL . 'assets/css/bootstrap4-toggle.min.css', array(),'3.6.1');
         wp_enqueue_style( 'mo-phys-admin-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(),$v_rand);
 		//wp_register_style( 'gmc-phys-main-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(), '1.0.0' );
 
@@ -166,6 +167,7 @@ class ManagerOrder{
         wp_enqueue_script( 'mo-phys-popper-js', MO_PHYS_URL . 'assets/js/popper.min.js', array(), '1.12.9', true );
         wp_enqueue_script( 'mo-phys-swee-js', MO_PHYS_URL . 'assets/js/sweetalert2.all.min.js', array(), '7.2.0', true );
 		wp_enqueue_script( 'mo-phys-bootstrap-js', MO_PHYS_URL . 'assets/js/bootstrap.min.js', array(), '4.3.1', true );
+        wp_enqueue_script( 'mo-phys-toggle-js', MO_PHYS_URL . 'assets/js/bootstrap4-toggle.min.js', array(), '3.6.1', true );
 		wp_enqueue_script( 'mo-phys-admin-js', MO_PHYS_URL . 'assets/js/admin.js', array( 'jquery' ), $v_rand, true );
         wp_localize_script( 'mo-phys-admin-js', 'mo_localize_script',
             array( 

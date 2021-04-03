@@ -38,6 +38,9 @@
                 <td scope="row"><?php echo $value->start_at; ?></td>
                 <td scope="row"><?php echo $value->end_at; ?></td>
                 <td scope="row">
+                    <input type="checkbox" <?php echo $value->auto_renew ? 'checked' : ''; ?> data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="secondary" data-style="ios" data-size="small">
+                </td>
+                <td scope="row">
                     <button type="button" class="btn btn-info mr-2 remove_camp"><i class="fa fa-trash" aria-hidden="true"></i></button>
                 </td>
             </tr>
