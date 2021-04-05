@@ -153,9 +153,31 @@ td.app_info p span {
 .form_camp {
 	width: 65%;
 }
+.form_camp.one {
+	width: 100%;
+}
 .custom_date {
 	display: flex;
 	position: relative;
 }
 .toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20px; }
   .toggle.ios .toggle-handle { border-radius: 20px; }
+
+input#renew_cam_update {
+	-ms-transform: scale(1.5);
+	-moz-transform: scale(1.5);
+	-webkit-transform: scale(1.5);
+	-o-transform: scale(1.5);
+	margin-left: 20px;
+	margin-top: 0px;
+}
+.input-group-prepend.w-left {
+	width: 30%;
+}
+
+.input-group-prepend.w-left .input-group-text{
+	width: 100%;
+}
+.form-control.w-right {
+	width: 70%;
+}

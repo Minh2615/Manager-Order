@@ -900,5 +900,138 @@ jQuery(document).ready(function($){
         var token = jQuery(this).closest('tr.row-tk').find('span.token_id').html();
         var url_camp =  mo_localize_script.page_camp+'&token='+token;
         window.location.href = url_camp;
+    });
+    
+    // update campain
+    
+    jQuery(document).on('click','.update_camp' ,function() {
+        
+        var camp_id = jQuery(this).closest('tr.row-tk').find('td.camp_id').html();
+        var token = jQuery(this).closest('tr.row-tk').find('td.access_token').html();
+        var camp_name_old = jQuery(this).closest('tr.row-tk').find('td.camp_name').html();
+        var camp_state_old = jQuery(this).closest('tr.row-tk').find('td.camp_state').html();
+        var max_budget_old = jQuery(this).closest('tr.row-tk').find('span.max_budget').html();
+        var merchant_budget_old = jQuery(this).closest('tr.row-tk').find('td.merchant_budget').html();
+        var product_id = jQuery(this).closest('tr.row-tk').find('td.product_id').html();
+        var start_at_old = jQuery(this).closest('tr.row-tk').find('span.start_at').html();
+        var end_at_old = jQuery(this).closest('tr.row-tk').find('span.end_at').html();
+        var scheduled_add_budget_amount_old = jQuery(this).closest('tr.row-tk').find('td.scheduled_add_budget_amount').html();
+        var scheduled_add_budget_days_old = jQuery(this).closest('tr.row-tk').find('td.scheduled_add_budget_days').html();
+        var camp_renew_old = jQuery(this).closest('tr.row-tk').find('td.camp_renew').html(); 
+        var currency_code =  jQuery(this).closest('tr.row-tk').find('td.currency_code').html(); 
+        var checked;
+        if(camp_renew_old == 1){
+            checked = 'checked';
+        }else{
+            checked = '';
+        }
+
+        swal({
+            title: 'Update Campaign',
+            html:
+                '<div class="container mt-5 custom_create">' + 
+                '<div class="form_camp one"><div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Camp name</span></div>'+ 
+                '<input type="text" class="form-control w-right" placeholder="Name" name="campaign_name" value="'+camp_name_old+'"></div>'+
+                '<div class="custom_date mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Start at</span></div>'+ 
+                '<input data-toggle="datepicker_start" type="text" id="#swal-input2" class="form-control w-right" placeholder="Start Date" name="start_date_camp"></div>'+
+                '<div class="custom_date mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">End at</span></div>'+ 
+                '<input data-toggle="datepicker_end" type="text" id="#swal-input1" class="form-control w-right" placeholder="End Date" name="end_date_camp"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Camp state</span></div>'+ 
+                '<input type="text" class="form-control w-right" placeholder="Amount max Budget" name="camp_state" value="'+camp_state_old+ '"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Amount budget ($)</span></div>'+ 
+                '<input type="text" class="form-control w-right" placeholder="Amount max Budget" name="max_budget" value="'+ max_budget_old + '"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Amount merchant budget ($)</span></div>'+ 
+                '<input type="text" class="form-control w-right" placeholder="Amount merchant Budget" name="merchant_budget" value="' + merchant_budget_old + '"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend w-left"><span class="input-group-text">Scheduled add budget amount ($)</span></div>'+ 
+                '<input type="text" class="form-control w-right" placeholder="The amount of budget automatically added to the campaign on the scheduled days" name="scheduled_add_budget_amount" value="' + scheduled_add_budget_amount_old +'"></div>'+
+                // '<div class="input-group mb-3 col-lg-12">' +
+                // '<div class="input-group-prepend"><span class="input-group-text">@</span></div>'+ 
+                // '<input type="text" class="form-control" placeholder="Days of the week budget is automatically added to this campaign" name="scheduled_add_budget_days"></div>'+
+                '<div class="input-group mb-3 col-lg-12">' +
+                '<div class="input-group-prepend"><span style="font-weight:bold;">Auto Renew Camp: </span></div>'+ 
+                '<input id="renew_cam_update" type="checkbox" '+ checked + ' data-toggle="toggle"></div>'+
+                '</div></div>',
+                onOpen: function() {
+                    $('[data-toggle="datepicker_start"]').datepicker({
+                        dateFormat:'yy-mm-dd',
+                        startView: 2,
+                        autoHide: true,
+                        inline: true,
+                        zIndex: 999999
+                    });
+                    $('[data-toggle="datepicker_start"]').datepicker('setDate',start_at_old);
+
+                    $('[data-toggle="datepicker_end"]').datepicker({
+                        dateFormat:'yy-mm-dd',
+                        startView: 2,
+                        autoHide: true,
+                        inline: true,
+                        zIndex: 999999
+                    });
+                    $('[data-toggle="datepicker_end"]').datepicker('setDate',end_at_old);
+                },
+                width:1000,
+                showLoaderOnConfirm: true,
+                confirmButtonText: 'Update',
+                preConfirm: function () {
+                    var campaign_name = jQuery('input[name="campaign_name"]').val();
+                    var end_date = jQuery('input[name="end_date_camp"]').val();
+                    var start_date = jQuery('input[name="start_date_camp"]').val();
+                    var max_budget = jQuery('input[name="max_budget"]').val();
+                    var merchant_budget = jQuery('input[name="merchant_budget"]').val();
+                    var scheduled_add_budget_amount = jQuery('input[name="scheduled_add_budget_amount"]').val();
+                    var scheduled_add_budget_days = jQuery('input[name="scheduled_add_budget_days"]').val();
+                    var camp_renew = jQuery('input#renew_cam_update').checked;
+                    console.log(camp_renew);
+                    return new Promise(function (resolve) {
+                      jQuery.ajax({
+                        url : mo_localize_script.ajaxurl,
+                        type: "post",
+                        data: {
+                            action: 'update_campaign_mpo',
+                            campaign_name: campaign_name,
+                            token: token,
+                            camp_id : camp_id,
+                            product_id: product_id,
+                            end_date: end_date,
+                            start_date: start_date,
+                            max_budget: max_budget,
+                            merchant_budget: merchant_budget,
+                            scheduled_add_budget_amount: scheduled_add_budget_amount,
+                            scheduled_add_budget_days: scheduled_add_budget_days,
+                            currency_code: currency_code,
+                            camp_renew : camp_renew,
+                        },
+                      })
+                        .done(function (rs) {
+                            console.log(rs);
+                            if(rs.data.message){
+                                swal.hideLoading();
+                                swal.showValidationError(
+                                    'Request failed:'+rs.data.message
+                                )
+                            }else{
+                                swal({title: "Create Success", type: 
+                                "success"});
+                            }    
+                        })
+                        .fail(function (erordata) {
+                          console.log(erordata);
+                          swal('cancelled!', 'The action have been cancelled by the user :-)', 'error');
+                        })
+                
+                    })
+                  },
+          })
     })
+      
+    
+    
 });

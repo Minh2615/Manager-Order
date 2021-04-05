@@ -56,6 +56,9 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_get_campaign_by_token_mpo', array( $this, 'get_campaign_by_token_mpo' ));
 		add_action( 'wp_ajax_nopriv_get_campaign_by_token_mpo', array( $this, 'get_campaign_by_token_mpo'));
 
+        add_action( 'wp_ajax_update_campaign_mpo', array( $this, 'update_campaign_mpo' ));
+		add_action( 'wp_ajax_nopriv_update_campaign_mpo', array( $this, 'update_campaign_mpo'));
+
         
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
 
@@ -622,6 +625,50 @@ class ManagerOrderAjax {
         }
 
     }
+
+    public function update_campaign_mpo(){
+
+        $camp_id = isset($_POST['camp_id']) ? $_POST['camp_id'] : '';
+        $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
+        $campaign_name = isset($_POST['campaign_name']) ? $_POST['campaign_name'] : '';
+        $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
+        $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : '';
+        $max_budget = isset($_POST['max_budget']) ? $_POST['max_budget'] : '';
+        $merchant_budget = isset($_POST['merchant_budget']) ? $_POST['merchant_budget'] : '';
+        $scheduled_add_budget_amount = isset($_POST['scheduled_add_budget_amount']) ? $_POST['scheduled_add_budget_amount'] : '';
+        $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
+        $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
+        $camp_renew = isset($_POST['camp_renew']) ? $_POST['camp_renew'] : '';
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+
+        $end_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($end_date));
+        $start_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($start_date));
+        $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns'.$camp_id;
+
+        // $response = wp_remote_post( $point , array(
+        //     'method'     => 'POST',
+        //     'headers'     => array(
+        //         'authorization' => 'Bearer '.$token ,
+        //         'Content-Type' => 'application/json',
+        //     ),
+        //     'body'       => "{\"auto_renew\":true,\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\"}",
+        //     'timeout'    => 70,
+        //     'sslverify'  => false,
+        //     'data_format' => 'body',
+        // ) );
+
+        // $parsed_response = json_decode( $response['body'] );
+        
+        // $data = $parsed_response->data;
+
+        // $this->insert_data_campaign_mpo($data , $token);
+
+        wp_send_json_success($camp_renew);
+
+        die();
+        
+    }
+
 
     public function remove_product_mpo(){
 

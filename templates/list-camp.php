@@ -29,19 +29,28 @@
             $query_app_name = $wpdb->get_results("SELECT name_app FROM {$wpdb->prefix}mpo_config WHERE access_token = '{$value->access_token}'"); 
         ?> 
             <tr class="row-tk">
+                <td scope="row" class="camp_id" style="display:none;"><?php echo $value->camp_id; ?></td>
+                <td scope="row" class="access_token" style="display:none;"><?php echo $value->access_token; ?></td>
+                <td scope="row" class="merchant_budget" style="display:none;"><?php echo $value->merchant_budget; ?></td>
+                <td scope="row" class="product_id" style="display:none;"><?php echo $value->product_id; ?></td>
+                <td scope="row" class="scheduled_add_budget_amount" style="display:none;"><?php echo $value->scheduled_add_budget_amount; ?></td>
+                <td scope="row" class="scheduled_add_budget_days" style="display:none;"><?php echo $value->scheduled_add_budget_days; ?></td>
+                <td scope="row" class="camp_renew" style="display:none;"><?php echo $value->auto_renew; ?></td>
+                <td scope="row" class="currency_code" style="display:none;"><?php echo $value->currency_code; ?></td>
                 <td scope="row"><?php echo $query_app_name[0]->name_app; ?></td>
-                <td scope="row"><?php echo $value->campaign_name; ?></td>
-                <td scope="row"><?php echo $value->state_camp; ?></td>
-                <td scope="row"><?php echo $value->amount_max_budget; ?></td>
-                <td scope="row"><?php echo $value->total_campaign_spend; ?> / <?php echo $value->amount_gmv; ?></td>
-                <td scope="row"><?php echo $value->sales; ?></td>
-                <td scope="row"><?php echo $value->start_at; ?></td>
-                <td scope="row"><?php echo $value->end_at; ?></td>
+                <td scope="row" class="camp_name"><?php echo $value->campaign_name; ?></td>
+                <td scope="row" class="camp_state"><?php echo $value->state_camp; ?></td>
+                <td scope="row"><span class="mr-2"><i class="fa fa-usd" aria-hidden="true"></i></span><span class="max_budget"><?php echo $value->amount_max_budget; ?></span></td>
+                <td scope="row" class="total_campaign_spend"><?php echo $value->total_campaign_spend; ?> / <span class="amount_gmv"><?php echo $value->amount_gmv; ?></span></td>
+                <td scope="row" class="camp_sale"><?php echo $value->sales; ?></td>
+                <td scope="row"><span class="mr-2"><i class="fa fa-calendar" aria-hidden="true"></i></span><span class="start_at"><?php echo date('Y-m-d', strtotime($value->start_at)); ?></span></td>
+                <td scope="row"><span class="mr-2"><i class="fa fa-calendar" aria-hidden="true"></i></span><span class="end_at"><?php echo date('Y-m-d', strtotime($value->end_at)); ?></span></td>
                 <td scope="row">
-                    <input type="checkbox" <?php echo $value->auto_renew ? 'checked' : ''; ?> data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="secondary" data-style="ios" data-size="small">
-                </td>
+                    <input id="renew_camps" type="checkbox" <?php echo $value->auto_renew ? 'checked' : ''; ?> data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="secondary" data-style="ios" data-size="small">
+                </td>                
                 <td scope="row">
                     <button type="button" class="btn btn-info mr-2 remove_camp"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info mr-2 update_camp"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                 </td>
             </tr>
         <?php $i++;} ?>
