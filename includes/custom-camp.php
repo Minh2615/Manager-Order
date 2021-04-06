@@ -40,6 +40,8 @@ class CustomCamPaign{
             $pageno = 1;
         }
 
+        die('dkm thang minh');
+
         $param_kv = '';
         if (isset($_GET['val_search']) && isset($_GET['key_search']) ) {
             $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
@@ -63,7 +65,7 @@ class CustomCamPaign{
             $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign WHERE access_token = %s LIMIT %d , %d", $token , $offset , $records_per_page );
 
             $data = $wpdb->get_results($query_data);
-            
+            die('dkm thang minh');
         }else{
             
             $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id" );    
@@ -75,7 +77,7 @@ class CustomCamPaign{
             $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign $camp_id LIMIT %d , %d" , $offset , $records_per_page );
             
             $data = $wpdb->get_results($query_data);
-
+            die('dkm thang minh');
         }
 
         mpo_get_templage('list-camp.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url));
@@ -83,5 +85,6 @@ class CustomCamPaign{
     }
 
 }
-
+die('dkm thang minh');
 $custom_camp = CustomCamPaign::instance();
+die('dkm thang minh');

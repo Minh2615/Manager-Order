@@ -514,8 +514,8 @@ class ManagerOrderAjax {
 
     public function create_campaign_mpo(){
         global $wpdb;
-        //$product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
-        $product_id = '6050880633ee6f851332fb87';
+
+        $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
         $campaign_name = isset($_POST['campaign_name']) ? $_POST['campaign_name'] : '';
         $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
         $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : '';
@@ -524,8 +524,7 @@ class ManagerOrderAjax {
         $scheduled_add_budget_amount = isset($_POST['scheduled_add_budget_amount']) ? $_POST['scheduled_add_budget_amount'] : '';
         $scheduled_add_budget_days = isset($_POST['scheduled_add_budget_days']) ? $_POST['scheduled_add_budget_days'] : '';
         $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
-        //$token = isset($_POST['token']) ? $_POST['token'] : '';
-        $token = '8fa3dc5807fb43e5b316c7a97ea807a0';
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
 
         $end_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($end_date));
         $start_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($start_date));
@@ -556,12 +555,9 @@ class ManagerOrderAjax {
     
  
     public function get_campaign_by_token_mpo(){
-        global $wpdb;
-        
-        //$token = isset($_POST['token']) ? $_POST['token'] : '';
 
-        $token = '8fa3dc5807fb43e5b316c7a97ea807a0';
-        
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+  
         $parsed_response = $this->get_data_campaign_mpo($token);
 
         wp_send_json_success($parsed_response);
