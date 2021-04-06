@@ -28,7 +28,11 @@ class CustomCamPaign{
 
         $token = isset($_GET['token']) ? $_GET['token'] : '';
        
-        $camp_id = isset($_GET['camp_id']) ? $_GET['camp_id'] : '';
+        $camp_id = '';
+
+        if (isset($_GET['camp_id']) && isset($_GET['camp_id']) ) {
+            $camp_id = ' WHERE camp_id ='.'"'.$_GET['camp_id'].'"'.'';
+        }
 
         if (isset($_GET['pageno'])) {
             $pageno = $_GET['pageno'];
@@ -62,13 +66,13 @@ class CustomCamPaign{
             
         }else{
             
-            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign WHERE camp_id = '$camp_id'" );    
+            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id" );    
 
             $total_sql = $wpdb->get_var($query_total);
 
             $total_pages = ceil($total_sql / $records_per_page);
 
-            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign WHERE camp_id = '$camp_id' LIMIT %d , %d" , $offset , $records_per_page );
+            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign $camp_id LIMIT %d , %d" , $offset , $records_per_page );
             
             $data = $wpdb->get_results($query_data);
 

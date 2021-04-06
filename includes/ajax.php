@@ -424,6 +424,9 @@ class ManagerOrderAjax {
                     'sslverify'  => false,
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
+
+                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%d') );
+
             }else{
                 $new_request = array(
                     'name'=>$value->product_name,
@@ -454,6 +457,8 @@ class ManagerOrderAjax {
                 );
     
                 $respon =  wp_remote_post( $api_variable , $arr_request );
+
+                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%d') );
             }
         }
         return $respon;
