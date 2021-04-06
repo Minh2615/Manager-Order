@@ -37,6 +37,9 @@
             </div> 
         </div>
     </div>
+    <div class="count-order mb-4">
+        <span>Total Order: <span style="font-weight: bold; font-size:15px;"><?php echo $total; ?></span></span>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>

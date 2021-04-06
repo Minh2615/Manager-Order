@@ -83,7 +83,7 @@ class HistoryOrder{
         
         $data = $wpdb->get_results($query_data);
 
-        mpo_get_templage('list-history.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url));
+        mpo_get_templage('list-history.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url, 'total'=>$total_pages_sql));
 
        
 
