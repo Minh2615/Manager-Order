@@ -200,7 +200,7 @@ class Mpo_Table{
 		$table_name = $this->_wpdb->prefix . 'mpo_order';
 
 		$sql = "ALTER TABLE $table_name
-				ADD name_campaign varchar(255) AFTER product_id";
+				ADD camp_id varchar(255) AFTER product_id";
 
 		$wpdb->query($sql);
 	}

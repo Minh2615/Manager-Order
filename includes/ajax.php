@@ -59,17 +59,20 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_update_campaign_mpo', array( $this, 'update_campaign_mpo' ));
 		add_action( 'wp_ajax_nopriv_update_campaign_mpo', array( $this, 'update_campaign_mpo'));
 
-        
+        //
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
-
         wp_schedule_single_event( time() + 3600, 'update_new_order_mpo' );
 
+        //
         add_action('update_status_order_mpo',array($this,'auto_update_status_order_mpo'));
-
         wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
 
+        //
         add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
+        //
 
+        add_action('get_campaign_mpo', array($this,'auto_get_campaign_mpo'));
+        wp_schedule_single_event( time() + 3600, 'get_campaign_mpo' );
 
 
 
@@ -501,6 +504,9 @@ class ManagerOrderAjax {
         die();
     }
 
+
+    //start camp
+
     public function create_campaign_mpo(){
         global $wpdb;
         //$product_id = isset($_POST['product_id']) ? $_POST['product_id'] : '';
@@ -550,6 +556,16 @@ class ManagerOrderAjax {
         //$token = isset($_POST['token']) ? $_POST['token'] : '';
 
         $token = '8fa3dc5807fb43e5b316c7a97ea807a0';
+        
+        $parsed_response = $this->get_data_campaign_mpo($token);
+
+        wp_send_json_success($parsed_response);
+
+        die();
+    }
+
+    public function get_data_campaign_mpo($token){
+
         $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns';
 
         $response = wp_remote_post( $point , array(
@@ -564,15 +580,16 @@ class ManagerOrderAjax {
         ) );
 
         $parsed_response = json_decode( $response['body'] );
-        
+
         $data = $parsed_response->data;
-        foreach($data as $value){
-            $this->insert_data_campaign_mpo($value , $token);
+        
+        if($data->message == ""){
+            foreach($data as $value){   
+                $this->insert_data_campaign_mpo($value , $token);
+            }
         }
 
-        wp_send_json_success($parsed_response);
-
-        die();
+        return $parsed_response;
     }
 
     public function insert_data_campaign_mpo($data , $token){
@@ -585,6 +602,7 @@ class ManagerOrderAjax {
         foreach($arr_camp as $value){
             $list_camp[] = $value->camp_id;
         }
+        
         $arr_insert = array(
             'campaign_name'=>$data->campaign_name,
             'auto_renew'=>$data->auto_renew,
@@ -620,11 +638,14 @@ class ManagerOrderAjax {
        );
         if(!in_array($data->id , $list_camp)){
             $wpdb->insert($wpdb->prefix . 'mpo_campaign',$arr_insert);
+            $wpdb->update($wpdb->prefix . 'mpo_order',array('camp_id'=>$data->id) , array('camp_id'=>$data->id));
         }else{
             $wpdb->update($wpdb->prefix . 'mpo_campaign',$arr_insert, array('camp_id'=>$data->id));
+            $wpdb->update($wpdb->prefix . 'mpo_order',array('camp_id'=>$data->id) , array('camp_id'=>$data->id));
         }
 
     }
+
 
     public function update_campaign_mpo(){
 
@@ -643,32 +664,46 @@ class ManagerOrderAjax {
 
         $end_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($end_date));
         $start_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($start_date));
-        $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns'.$camp_id;
+        $point = 'https://merchant.wish.com/api/v3/product_boost/campaigns/'.$camp_id;
 
-        // $response = wp_remote_post( $point , array(
-        //     'method'     => 'POST',
-        //     'headers'     => array(
-        //         'authorization' => 'Bearer '.$token ,
-        //         'Content-Type' => 'application/json',
-        //     ),
-        //     'body'       => "{\"auto_renew\":true,\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\"}",
-        //     'timeout'    => 70,
-        //     'sslverify'  => false,
-        //     'data_format' => 'body',
-        // ) );
+        $response = wp_remote_post( $point , array(
+            'method'     => 'PUT',
+            'headers'     => array(
+                'authorization' => 'Bearer '.$token ,
+                'Content-Type' => 'application/json',
+            ),
+            'body'       => "{\"auto_renew\":{$camp_renew},\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\"}",
+            'timeout'    => 70,
+            'sslverify'  => false,
+            'data_format' => 'body',
+        ) );
 
-        // $parsed_response = json_decode( $response['body'] );
+        $parsed_response = json_decode( $response['body'] );
         
-        // $data = $parsed_response->data;
+        $data = $parsed_response->data;
 
-        // $this->insert_data_campaign_mpo($data , $token);
+        $this->insert_data_campaign_mpo($data , $token);
 
-        wp_send_json_success($camp_renew);
+        wp_send_json_success($parsed_response);
 
         die();
         
     }
 
+    public function auto_get_campaign_mpo(){
+        global $wpdb;
+
+        $list_token = $wpdb->get_results("SELECT access_token FROM {$wpdb->prefix}mpo_config");
+        
+        foreach($list_token as $value){
+            $token = $value->access_token;
+            $this->get_data_campaign_mpo($token);
+        }
+        
+    }
+
+
+    // end campaing
 
     public function remove_product_mpo(){
 

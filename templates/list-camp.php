@@ -9,6 +9,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col"><?php echo __( 'STT', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Camp Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Status', 'order_sandbox' ); ?></th>
@@ -23,12 +24,13 @@
         </thead>
         <tbody>
         <?php 
-            $i=0;
+            $i=1;
             global $wpdb;
             foreach($data as $value){
             $query_app_name = $wpdb->get_results("SELECT name_app FROM {$wpdb->prefix}mpo_config WHERE access_token = '{$value->access_token}'"); 
         ?> 
             <tr class="row-tk">
+                <td scope="row"><?php echo $i; ?></td>
                 <td scope="row" class="camp_id" style="display:none;"><?php echo $value->camp_id; ?></td>
                 <td scope="row" class="access_token" style="display:none;"><?php echo $value->access_token; ?></td>
                 <td scope="row" class="merchant_budget" style="display:none;"><?php echo $value->merchant_budget; ?></td>

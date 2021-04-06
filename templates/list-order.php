@@ -37,6 +37,9 @@
             </div> 
         </div>
     </div>
+    <div class="count-order mb-4">
+        <span>Total Order: <span style="font-weight: bold; font-size:15px;"><?php echo $total_sql; ?></span></span>
+    </div>
 
     <table class="table table-striped">
         <thead>
@@ -87,10 +90,12 @@
             
             <tr class="row-tk">
                 <td scope="row">
-                    <?php if(empty($value->name_campaign)){ ?>
+                    <?php if(empty($value->camp_id)){ ?>
                         <button type="button" class="btn btn-info create_camp"><?php echo __( 'Create ', 'order_sandbox' ); ?></button>
-                    <?php }else{ ?>
-                        <a href="#"><?php echo $value->name_campaign; ?></a>
+                    <?php }else{
+                    $camp_name = $wpdb->get_results("SELECT campaign_name FROM {$wpdb->prefix}mpo_campaign WHERE camp_id  = '{$value->camp_id}'");                     
+                        ?>
+                        <a href="<?php echo admin_url().'/admin.php?page=mpo_list_campaign&camp_id='.$value->camp_id; ?>" target="_blank"><?php echo $camp_name[0]->campaign_name; ?></a>
                     <?php } ?>
                 </td>
                 <td class="access_token" style="display:none"><?php echo $value->access_token; ?></td>

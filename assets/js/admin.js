@@ -988,8 +988,8 @@ jQuery(document).ready(function($){
                     var merchant_budget = jQuery('input[name="merchant_budget"]').val();
                     var scheduled_add_budget_amount = jQuery('input[name="scheduled_add_budget_amount"]').val();
                     var scheduled_add_budget_days = jQuery('input[name="scheduled_add_budget_days"]').val();
-                    var camp_renew = jQuery('input#renew_cam_update').checked;
-                    console.log(camp_renew);
+                    var camp_renew = jQuery('input#renew_cam_update').prop("checked");
+
                     return new Promise(function (resolve) {
                       jQuery.ajax({
                         url : mo_localize_script.ajaxurl,
@@ -1018,8 +1018,11 @@ jQuery(document).ready(function($){
                                     'Request failed:'+rs.data.message
                                 )
                             }else{
-                                swal({title: "Create Success", type: 
-                                "success"});
+                                swal({title: "Success" , type: 
+                                    "success"}).then(function(){ 
+                                        location.reload(true);
+                                    }
+                                );
                             }    
                         })
                         .fail(function (erordata) {

@@ -40,6 +40,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col"><?php echo __( 'Campaign', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'App Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Date', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order ID', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'State', 'order_sandbox' ); ?></th>    
@@ -68,6 +70,8 @@
         </thead>
         <tbody>
         <?php 
+
+        global $wpdb;
         $currency_symbols = mpo_currency_symbols();
         $list_time_down = array();
         $i=0;
@@ -75,10 +79,21 @@
        
         $symbols = array_key_exists($value->currency_code , $currency_symbols) ? $currency_symbols[$value->currency_code] : '';
         $list_time_down[] = array($value->hours_to_fulfill, $value->order_time);
-        
+
+         $query_app_name = $wpdb->get_results("SELECT name_app FROM {$wpdb->prefix}mpo_config WHERE access_token = '{$value->access_token}'"); 
         ?>
             
             <tr class="row-tk">
+                <td scope="row">
+                    <?php if(empty($value->camp_id)){ ?>
+                        <button type="button" class="btn btn-info create_camp"><?php echo __( 'Create ', 'order_sandbox' ); ?></button>
+                    <?php }else{
+                    $camp_name = $wpdb->get_results("SELECT campaign_name FROM {$wpdb->prefix}mpo_campaign WHERE camp_id  = '{$value->camp_id}'");                     
+                        ?>
+                        <a href="<?php echo admin_url().'/admin.php?page=mpo_list_campaign&camp_id='.$value->camp_id; ?>" target="_blank"><?php echo $camp_name[0]->campaign_name; ?></a>
+                    <?php } ?>
+                </td>
+                <td scope="row"><?php echo $query_app_name[0]->name_app; ?></td>
                 <th scope="row"><?php echo $value->order_time; ?></th>
                 <td class="order_id"><?php echo $value->order_id; ?></td>
                 <td class="state_order"><span><?php echo $value->status_order ?></span></td>

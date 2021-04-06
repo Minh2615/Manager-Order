@@ -111,7 +111,7 @@ class CustomOrder{
 
         }
 
-        mpo_get_templage('list-order.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url));
+        mpo_get_templage('list-order.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url, 'total_sql'=>$total_sql));
 
     }
 
