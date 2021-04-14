@@ -14,6 +14,8 @@
                 <th scope="col"><?php echo __( 'Camp Name', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Status', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Budget', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'GMV', 'order_sandbox' ); ?></th>
+                <th scope="col"><?php echo __( 'Spend', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Spend/GMV', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Order', 'order_sandbox' ); ?></th>    
                 <th scope="col"><?php echo __( 'Start Date', 'order_sandbox' ); ?></th>
@@ -43,7 +45,10 @@
                 <td scope="row" class="camp_name"><?php echo $value->campaign_name; ?></td>
                 <td scope="row" class="camp_state"><?php echo $value->state_camp; ?></td>
                 <td scope="row"><span class="mr-2"><i class="fa fa-usd" aria-hidden="true"></i></span><span class="max_budget"><?php echo $value->amount_max_budget; ?></span></td>
-                <td scope="row" class="total_campaign_spend"><?php echo $value->total_campaign_spend; ?> / <span class="amount_gmv"><?php echo $value->amount_gmv; ?></span></td>
+                <td scope="row" class="total_campaign_gmv"><?php echo $value->amount_gmv; ?></td>
+                <td scope="row" class="total_campaign_spend"><?php echo $value->total_campaign_spend; ?></td>
+                <?php $value->amount_gmv ? $spend_gmv = round(($value->total_campaign_spend / $value->amount_gmv ) * 100 , 2) : $spend_gmv = 0;  ?>
+                <td scope="row" class="spend_gmc"><?php echo $spend_gmv ; ?>%</td>
                 <td scope="row" class="camp_sale"><?php echo $value->sales; ?></td>
                 <td scope="row"><span class="mr-2"><i class="fa fa-calendar" aria-hidden="true"></i></span><span class="start_at"><?php echo date('Y-m-d', strtotime($value->start_at)); ?></span></td>
                 <td scope="row"><span class="mr-2"><i class="fa fa-calendar" aria-hidden="true"></i></span><span class="end_at"><?php echo date('Y-m-d', strtotime($value->end_at)); ?></span></td>

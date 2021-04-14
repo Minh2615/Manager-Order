@@ -40,8 +40,6 @@ class CustomCamPaign{
             $pageno = 1;
         }
 
-        die('dkm thang minh');
-
         $param_kv = '';
         if (isset($_GET['val_search']) && isset($_GET['key_search']) ) {
             $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
@@ -56,28 +54,29 @@ class CustomCamPaign{
         if(!empty($token)){
             $admin_url .= '&token='.$token;
         
-            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign WHERE access_token = %s " , $token );
+            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign WHERE access_token = %s AND state_camp <> 'ENDED'" , $token );
+            print_r($query_total);
 
             $total_sql = $wpdb->get_var($query_total);
             
             $total_pages = ceil($total_sql / $records_per_page);
 
-            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign WHERE access_token = %s LIMIT %d , %d", $token , $offset , $records_per_page );
+            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign WHERE access_token = %s  AND state_camp <> 'ENDED' LIMIT %d , %d", $token , $offset , $records_per_page );
 
             $data = $wpdb->get_results($query_data);
-            die('dkm thang minh');
+
         }else{
             
-            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id" );    
+            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id WHERE state_camp <> 'ENDED'" );    
 
             $total_sql = $wpdb->get_var($query_total);
 
             $total_pages = ceil($total_sql / $records_per_page);
 
-            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign $camp_id LIMIT %d , %d" , $offset , $records_per_page );
+            $query_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mpo_campaign $camp_id WHERE state_camp <> 'ENDED'  LIMIT %d , %d" , $offset , $records_per_page );
             
             $data = $wpdb->get_results($query_data);
-            die('dkm thang minh');
+
         }
 
         mpo_get_templage('list-camp.php',array('data'=>$data,'total_pages'=>$total_pages,'pageno'=>$pageno,'admin_url'=>$admin_url));
@@ -85,6 +84,5 @@ class CustomCamPaign{
     }
 
 }
-die('dkm thang minh');
+
 $custom_camp = CustomCamPaign::instance();
-die('dkm thang minh');
