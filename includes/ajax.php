@@ -74,6 +74,8 @@ class ManagerOrderAjax {
         add_action('get_campaign_mpo', array($this,'auto_get_campaign_mpo'));
         wp_schedule_single_event( time() + 3600, 'get_campaign_mpo' );
 
+        // upload token after 30 days
+
 
 
 	}
