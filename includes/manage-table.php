@@ -40,9 +40,34 @@ class Mpo_Table{
 		$this->mpo_order();
 		$this->mpo_product();
 		$this->mpo_campaign();
+		$this->addColumnRefeshTokenConfigMpo();
+		$this->addColumnExpiryTimeConfigMpo();
 		$this->addColumnNoteConfigMpo();
 		$this->addColumnNameCampaign();
 		$this->addColumnProductIdCamp();
+	}
+	private function addColumnExpiryTimeConfigMpo(){
+
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_config';
+
+		$sql = "ALTER TABLE $table_name
+				ADD expiry_time varchar(255) AFTER name_app";
+
+		$wpdb->query($sql);
+	}
+
+	private function addColumnRefeshTokenConfigMpo(){
+
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_config';
+
+		$sql = "ALTER TABLE $table_name
+				ADD refesh_token varchar(255) AFTER access_token";
+
+		$wpdb->query($sql);
 	}
 
     private function mpo_config() {

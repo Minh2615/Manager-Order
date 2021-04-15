@@ -123,12 +123,13 @@ class ManagerOrderAjax {
         );
 
         $api_endpoint = 'https://merchant.wish.com/api/v3/oauth/access_token';
-
         $parsed_response = $this->request_manager_order($api_endpoint,$request, 'GET');
             
         $token = $parsed_response->data->access_token;
+        $refesh_token = $parsed_response->data->refresh_token;
+        $expiry_time = $parsed_response->data->expiry_time;
 
-        $wpdb->update($wpdb->prefix . 'mpo_config', array('access_token'=>$token) ,array( 'client_id' => $client_id ));
+        $wpdb->update($wpdb->prefix . 'mpo_config', array('access_token'=>$token , 'refesh_token'=>$refesh_token , 'expiry_time'=>$expiry_time) ,array( 'client_id' => $client_id ));
 
         wp_send_json_success($parsed_response);
 
