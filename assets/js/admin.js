@@ -620,6 +620,7 @@ jQuery(document).ready(function($){
         
         var postData = new FormData(this);  
         postData.append('action', 'upload_csv_product_mpo');
+
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             type: "POST",
@@ -627,24 +628,24 @@ jQuery(document).ready(function($){
             processData: false,
             contentType: false,
             success: function(result){ 
-                var data_name = result.data.name;
-                var data_token = result.data.token;
-                var current = new Date(jQuery.now());
-                window.localStorage.removeItem('name_file' );
-                window.localStorage.removeItem('app_token' );
-                var file_name = window.localStorage.setItem("name_file", data_name );
-                var app_token = window.localStorage.setItem("app_token", data_token );
-                
+                // var data_name = result.data.name;
+                // var data_token = result.data.token;
+                // var current = new Date(jQuery.now());
+                // window.localStorage.removeItem('name_file' );
+                // window.localStorage.removeItem('app_token' );
+                // var file_name = window.localStorage.setItem("name_file", data_name );
+                // var app_token = window.localStorage.setItem("app_token", data_token );
+               console.log(result);
                 if(result.data.code === false){
                     swal({title:"Import Database Error", type: 
                         "error"}).then(function(){ 
-                            location.reload();
+                            location.reload(true);
                         }
                     );
                 }else{
                     swal({title: "Success", type: 
                         "success"}).then(function(){ 
-                            location.reload();
+                            location.reload(true);
                         }
                     );
                 }               

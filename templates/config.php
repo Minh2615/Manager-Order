@@ -80,11 +80,23 @@
                     <form class="form-horizontal" action="" method="post"
                         name="frmCSVImport" id="frmCSVImport"
                         enctype="multipart/form-data">
-                        <div class="input-row">
-                        
-                            <input type="file" name="file_product" id="file_product" accept=".csv">
-                            <input type="hidden" name="access_token" value="<?php echo $value->access_token; ?>">
-                            <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                            <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                            <select class="custom-select mr-sm-2" name="action_form">
+                                <option value="upload_product">UpLoad</option>
+                                <option value="remove_sku">Remove</option>
+                            </select>
+                            </div>
+                            <div class="col-auto my-1">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="file" name="file_product" id="file_product" accept=".csv">
+                                    <input type="hidden" name="access_token" value="<?php echo $value->access_token; ?>">
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                            </div>
                         </div>
                     </form>
                 </td>

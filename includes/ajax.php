@@ -346,48 +346,88 @@ class ManagerOrderAjax {
         $result['name'] = $name;
         $file = fopen($fileName_tmp, 'r');
         fgetcsv($file);
-        if ($_FILES["file_product"]["size"] > 0) {
-            while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-               $arr_insert = array(
-                    'name_file'=>$name,
-                    'access_token'=>$token,
-                    'product_parent' => $column[0],
-                    'product_sku'=> $column[1],
-                    'product_upc'=> $column[2],
-                    'merchant_name'=> $column[3],
-                    'product_name'=> $column[4],
-                    'declared_name'=> $column[5],
-                    'declared_local_name'=> $column[6],
-                    'product_pieces'=> $column[7],
-                    'product_color'=> $column[8],
-                    'product_size'=> $column[9],
-                    'product_quantity'=> $column[10],
-                    'product_tags'=> $column[11],
-                    'localized_currency_code'=> $column[12],
-                    'product_des'=> $column[13],
-                    'product_price'=> $column[14],
-                    'localized_shipping'=> $column[15],
-                    'product_shipping'=> $column[16],
-                    'shipping_time'=> $column[17],
-                    'landing_page_url'=> $column[18],
-                    'product_img'=> $column[19],
-               );
 
-                $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
-                $result['code'] = $import;
-            }
+        $row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
+        // check button remove or upload product
+
+        if ($_POST['action_form'] == 'upload_product') {
+            // if ($_FILES["file_product"]["size"] > 0) {
+            //     while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+            //        $arr_insert = array(
+            //             'name_file'=>$name,
+            //             'access_token'=>$token,
+            //             'product_parent' => $column[0],
+            //             'product_sku'=> $column[1],
+            //             'product_upc'=> $column[2],
+            //             'merchant_name'=> $column[3],
+            //             'product_name'=> $column[4],
+            //             'declared_name'=> $column[5],
+            //             'declared_local_name'=> $column[6],
+            //             'product_pieces'=> $column[7],
+            //             'product_color'=> $column[8],
+            //             'product_size'=> $column[9],
+            //             'product_quantity'=> $column[10],
+            //             'product_tags'=> $column[11],
+            //             'localized_currency_code'=> $column[12],
+            //             'product_des'=> $column[13],
+            //             'product_price'=> $column[14],
+            //             'localized_shipping'=> $column[15],
+            //             'product_shipping'=> $column[16],
+            //             'shipping_time'=> $column[17],
+            //             'landing_page_url'=> $column[18],
+            //             'product_img'=> $column[19],
+            //        );
+    
+            //         $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
+            //         $result['code'] = $import;
+            //     }
+            // }
+    
+            // fclose($file);
+            
+            // $result = $this->auto_upload_product_merchant($name,$token);
+
+            $a = 'upload';
+        }
+        if($_POST['action_form'] == "remove_sku") {
+
+            // if ($_FILES["file_product"]["size"] > 0) {
+            //     $x=1;
+            //     $y=10;
+            //     $list_sku = array();
+            //     while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+            //         $point_remove = 'https://merchant.wish.com/api/v2/product/remove';
+            //         $request= array(
+            //             'access_token' =>$token,
+            //             'parent_sku'=>$column[0],
+            //         );
+            //         $list_sku[] = $column[0];
+            //         // if($x<=10){
+            //         //     $result = $this->start_remove_product_merchant($request, $point_remove);
+            //         // }else if($x){
+                        
+            //         // }
+                      
+            //         // $x++;
+            //         // $y+=10;
+            //     }
+            // }
+            $a = 'remove';
         }
 
-        fclose($file);
-        
-        $result = $this->auto_upload_product_merchant($name,$token);
-
-        wp_send_json_success($result);
+        wp_send_json_success($a);
 
         die();
 
     }
+    public function start_remove_product_merchant(){
 
+    }
+
+    public function auto_romove_product_merchant(){
+
+    }
+    
     public function start_upload_product_merchant($offset, $limit ,$name_file, $token){
         global $wpdb;
 
