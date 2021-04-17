@@ -467,7 +467,7 @@ class ManagerOrderAjax {
                     'sslverify'  => false,
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
-
+                
                 $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%d') );
 
             }else{
