@@ -63,15 +63,18 @@ class HistoryOrder{
         //custom time
         $today=date("Y-m-d");
         $yesterday = date('Y-m-d',strtotime("-1 days"));
-        if($_GET['time'] == 1){
+
+        $time = isset($_GET['time']) ? $_GET['time'] : '';
+
+        if($time == 1){
             $param_time = 'order_time >= "'.$today.'"';
-        }else if($_GET['time']==0){
+        }else if($time == 0){
             $param_time = 'order_time <= date_sub(now(), interval 0 day)';
-        }else if($_GET['time'] == 2){
+        }else if($time == 2){
             $param_time = 'order_time BETWEEN "'.$yesterday.'" and "'.$today.'"';
-        }else if($_GET['time'] == 7){
+        }else if($time == 7){
             $param_time = 'order_time >= date_sub(now(), interval 7 day)';
-        }else if($_GET['time'] == 30){
+        }else if($time == 30){
             $param_time = 'order_time >= date_sub(now(), interval 30 day)';
         }
         //end time

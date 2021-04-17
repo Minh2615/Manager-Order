@@ -6,33 +6,48 @@
         </div>
         <div class="col-4">
             <ul class="nav nav-pills">
+                <?php if(isset($_GET['time'])){
+                    $time = $_GET['time'];
+                }else{
+                    $time = '';
+                }; ?>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==0 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=0' ?>">All time</a>
+                    <a class="nav-link nav-time <?php echo $time == 0 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=0' ?>">All time</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==1  ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=1' ?>">To Day</a>
+                    <a class="nav-link nav-time <?php echo $time ==1  ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=1' ?>">To Day</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==2 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=2' ?>">Yesterday</a>
+                    <a class="nav-link nav-time <?php echo $time ==2 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=2' ?>">Yesterday</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==7 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=7' ?>">Last Week</a>
+                    <a class="nav-link nav-time <?php echo $time ==7 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=7' ?>">Last Week</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-time <?php echo $_GET['time']==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Month</a>
+                    <a class="nav-link nav-time <?php echo $time ==30 ? 'active' : '';  ?>" href="<?php echo $admin_url.'&time=30' ?>">Last Month</a>
                 </li>
             </ul>
         </div>
         <div class="col-4">
             <div class="input-group">
                 <div class="input-group-prepend">
+                    <?php if(isset($_GET['key_search'])){
+                        $key_search = $_GET['key_search'];
+                    }else{
+                        $key_search = '';
+                    }; ?>
                     <select class="custom_search" id="key_search">
-                        <option value="order_id" <?php echo $_GET['key_search'] == 'order_id' ? 'selected' : '' ; ?>> Order id </option>     
-                        <option value="product_id" <?php echo $_GET['key_search'] == 'product_id' ? 'selected' : '' ; ?>>Product Id </option> 
-                        <option value="shipping_name" <?php echo $_GET['key_search'] == 'shipping_name' ? 'selected' : '' ; ?>> User Name </option>  
+                        <option value="order_id" <?php echo $key_search == 'order_id' ? 'selected' : '' ; ?>> Order id </option>     
+                        <option value="product_id" <?php echo $key_search == 'product_id' ? 'selected' : '' ; ?>>Product Id </option> 
+                        <option value="shipping_name" <?php echo $key_search == 'shipping_name' ? 'selected' : '' ; ?>> User Name </option>  
                     </select>
                 </div>
-                <input type="text" class="form-control" placeholder="Enter the key..." name="val_search" value="<?php echo $_GET['val_search'] ? $_GET['val_search'] : ''; ?>">
+                <?php if(isset($_GET['val_search'])){
+                    $val_search = $_GET['val_search'];
+                }else{
+                    $val_search = '';
+                }; ?>
+                <input type="text" class="form-control" placeholder="Enter the key..." name="val_search" value="<?php echo $val_search  ? $val_search : ''; ?>">
                 <button type="button" class="btn btn-dark btn-search_order"><i class="fa fa-search" aria-hidden="true"></i></button>
             </div> 
         </div>

@@ -67,9 +67,7 @@ class CustomCamPaign{
 
         }else{
             
-            $query_total = $wpdb->prepare( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id WHERE state_camp <> 'ENDED'" );    
-
-            $total_sql = $wpdb->get_var($query_total);
+            $total_sql = $wpdb->get_var( "SELECT count(camp_id) FROM {$wpdb->prefix}mpo_campaign $camp_id WHERE state_camp <> 'ENDED'" );    
 
             $total_pages = ceil($total_sql / $records_per_page);
 
