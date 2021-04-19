@@ -56,7 +56,7 @@
                     <input id="renew_camps" type="checkbox" <?php echo $value->auto_renew ? 'checked' : ''; ?> data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="secondary" data-style="ios" data-size="small">
                 </td>                
                 <td scope="row">
-                    <button type="button" class="btn btn-info mr-2 remove_camp"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    <!-- <button type="button" class="btn btn-info mr-2 remove_camp"><i class="fa fa-trash" aria-hidden="true"></i></button> -->
                     <button type="button" class="btn btn-info mr-2 update_camp"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                 </td>
             </tr>

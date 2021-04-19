@@ -44,8 +44,8 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
 
-        add_action( 'wp_ajax_remove_product_mpo', array( $this, 'remove_product_mpo' ));
-		add_action( 'wp_ajax_nopriv_remove_product_mpo', array( $this, 'remove_product_mpo'));
+        // add_action( 'wp_ajax_remove_product_mpo', array( $this, 'remove_product_mpo' ));
+		// add_action( 'wp_ajax_nopriv_remove_product_mpo', array( $this, 'remove_product_mpo'));
 
         add_action( 'wp_ajax_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo' ));
 		add_action( 'wp_ajax_nopriv_save_note_config_app_mpo', array( $this, 'save_note_config_app_mpo'));
@@ -70,7 +70,8 @@ class ManagerOrderAjax {
         //
         add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
         //
-
+        add_action('remove_product_mpo', array($this,'start_remove_product_merchant'),10,4);
+        //
         add_action('get_campaign_mpo', array($this,'auto_get_campaign_mpo'));
         wp_schedule_single_event( time() + 3600, 'get_campaign_mpo' );
 
@@ -351,81 +352,111 @@ class ManagerOrderAjax {
         // check button remove or upload product
 
         if ($_POST['action_form'] == 'upload_product') {
-            // if ($_FILES["file_product"]["size"] > 0) {
-            //     while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-            //        $arr_insert = array(
-            //             'name_file'=>$name,
-            //             'access_token'=>$token,
-            //             'product_parent' => $column[0],
-            //             'product_sku'=> $column[1],
-            //             'product_upc'=> $column[2],
-            //             'merchant_name'=> $column[3],
-            //             'product_name'=> $column[4],
-            //             'declared_name'=> $column[5],
-            //             'declared_local_name'=> $column[6],
-            //             'product_pieces'=> $column[7],
-            //             'product_color'=> $column[8],
-            //             'product_size'=> $column[9],
-            //             'product_quantity'=> $column[10],
-            //             'product_tags'=> $column[11],
-            //             'localized_currency_code'=> $column[12],
-            //             'product_des'=> $column[13],
-            //             'product_price'=> $column[14],
-            //             'localized_shipping'=> $column[15],
-            //             'product_shipping'=> $column[16],
-            //             'shipping_time'=> $column[17],
-            //             'landing_page_url'=> $column[18],
-            //             'product_img'=> $column[19],
-            //        );
+            if ($_FILES["file_product"]["size"] > 0) {
+                while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+                   $arr_insert = array(
+                        'name_file'=>$name,
+                        'access_token'=>$token,
+                        'product_parent' => $column[0],
+                        'product_sku'=> $column[1],
+                        'product_upc'=> $column[2],
+                        'merchant_name'=> $column[3],
+                        'product_name'=> $column[4],
+                        'declared_name'=> $column[5],
+                        'declared_local_name'=> $column[6],
+                        'product_pieces'=> $column[7],
+                        'product_color'=> $column[8],
+                        'product_size'=> $column[9],
+                        'product_quantity'=> $column[10],
+                        'product_tags'=> $column[11],
+                        'localized_currency_code'=> $column[12],
+                        'product_des'=> $column[13],
+                        'product_price'=> $column[14],
+                        'localized_shipping'=> $column[15],
+                        'product_shipping'=> $column[16],
+                        'shipping_time'=> $column[17],
+                        'landing_page_url'=> $column[18],
+                        'product_img'=> $column[19],
+                   );
     
-            //         $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
-            //         $result['code'] = $import;
-            //     }
-            // }
+                    $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
+                    $result['code'] = $import;
+                }
+            }
     
-            // fclose($file);
+            fclose($file);
             
-            // $result = $this->auto_upload_product_merchant($name,$token);
+            $result = $this->auto_upload_product_merchant($name,$token);
 
-            $a = 'upload';
         }
         if($_POST['action_form'] == "remove_sku") {
 
-            // if ($_FILES["file_product"]["size"] > 0) {
-            //     $x=1;
-            //     $y=10;
-            //     $list_sku = array();
-            //     while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-            //         $point_remove = 'https://merchant.wish.com/api/v2/product/remove';
-            //         $request= array(
-            //             'access_token' =>$token,
-            //             'parent_sku'=>$column[0],
-            //         );
-            //         $list_sku[] = $column[0];
-            //         // if($x<=10){
-            //         //     $result = $this->start_remove_product_merchant($request, $point_remove);
-            //         // }else if($x){
+            if ($_FILES["file_product"]["size"] > 0) {
+                while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+                   $arr_insert = array(
+                        'parent_sku'=>$column[0],
+                        'access_token'=>$token,
                         
-            //         // }
-                      
-            //         // $x++;
-            //         // $y+=10;
-            //     }
-            // }
-            $a = 'remove';
+                   );
+    
+                    $import = $wpdb->insert($wpdb->prefix . 'mpo_sku_product',$arr_insert);
+                    $result['code'] = $import;
+                }
+            }
+    
+            fclose($file);
+
+            $result = $this->auto_romove_product_merchant($name,$token);
+
         }
 
-        wp_send_json_success($a);
+        wp_send_json_success($result);
 
         die();
 
     }
-    public function start_remove_product_merchant(){
+    public function start_remove_product_merchant($offset , $limit ,$name_file,$token){
+        global $wpdb;
 
+        $list_sku = $wpdb->get_results("SELECT DISTINCT * FROM {$wpdb->prefix}mpo_sku_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
+
+        foreach($list_sku as $value){
+            $point_remove = 'https://merchant.wish.com/api/v2/product/remove';
+
+            $request= array(
+                'access_token' =>$token,
+                'parent_sku'=>$value->parent_sku,
+            );
+    
+            $respon = $this->request_manager_order($point_remove, $request , 'POST');
+        }
+
+        wp_send_json_success($respon);
+
+        die();
     }
 
-    public function auto_romove_product_merchant(){
+    public function auto_romove_product_merchant($name_file, $token){
 
+        global $wpdb;
+
+        $limit = 10;
+        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_sku_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
+        
+        $time = 60;
+
+        $total = ceil($count / $limit);
+        for($page = 1; $page<=$total;$page++){
+            $offset = ($page-1) * $limit;
+            if($page==1){
+                $response = $this->start_remove_product_merchant($offset,$limit,$name_file,$token);
+            }else{
+                wp_schedule_single_event( time() + $time, 'remove_product_mpo',array($offset,$limit,$name_file,$token));
+            }
+            $time +=60;
+        }
+
+        return $response;
     }
     
     public function start_upload_product_merchant($offset, $limit ,$name_file, $token){
@@ -512,10 +543,6 @@ class ManagerOrderAjax {
 
         global $wpdb;
 
-        // //$name_file = 'logistics_1003.csv';
-        // $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
-
-        // $token = isset($_POST['token']) ? $_POST['token'] : '';
         $limit = 10;
         $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
         
@@ -527,7 +554,6 @@ class ManagerOrderAjax {
             if($page==1){
                 $response = $this->start_upload_product_merchant($offset,$limit,$name_file,$token);
             }else{
-                
                 wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit,$name_file,$token));
             }
             $time +=60;
@@ -705,6 +731,7 @@ class ManagerOrderAjax {
         $currency_code = isset($_POST['currency_code']) ? $_POST['currency_code'] : '';
         $camp_renew = isset($_POST['camp_renew']) ? $_POST['camp_renew'] : '';
         $token = isset($_POST['token']) ? $_POST['token'] : '';
+        $state_camp = isset($_POST['state_camp']) ? $_POST['state_camp'] : '';
 
         $end_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($end_date));
         $start_date_fm = date('Y-m-d\TH:i:s\Z', strtotime($start_date));
@@ -716,7 +743,7 @@ class ManagerOrderAjax {
                 'authorization' => 'Bearer '.$token ,
                 'Content-Type' => 'application/json',
             ),
-            'body'       => "{\"auto_renew\":{$camp_renew},\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\"}",
+            'body'       => "{\"auto_renew\":{$camp_renew},\"campaign_name\":\"{$campaign_name}\",\"end_at\":\"{$end_date_fm}\",\"intense_boost\":true,\"max_budget\":{\"amount\":{$max_budget},\"currency_code\":\"{$currency_code}\"},\"merchant_budget\":{\"amount\":{$merchant_budget},\"currency_code\":\"{$currency_code}\"},\"products\":[{\"product_id\":\"{$product_id}\"}],\"scheduled_add_budget_amount\":{\"amount\":{$scheduled_add_budget_amount},\"currency_code\":\"{$currency_code}\"},\"scheduled_add_budget_days\":[0],\"start_at\":\"{$start_date_fm}\" , \"state\":\"{$state_camp}\"}",
             'timeout'    => 70,
             'sslverify'  => false,
             'data_format' => 'body',
@@ -748,22 +775,6 @@ class ManagerOrderAjax {
 
 
     // end campaing
-
-    public function remove_product_mpo(){
-
-        $token = isset($_POST['token']) ? $_POST['token'] : '';
-        $parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : '';
-        $point_remove = 'https://merchant.wish.com/api/v2/product/remove';
-        $request= array(
-            'access_token' =>$token,
-            'parent_sku'=>$parent_id,
-        );
-
-        $respon = $this->request_manager_order($point_remove, $request , 'POST');
-        wp_send_json_success($respon);
-
-        die();
-    }
 
     public function request_manager_order($api_endpoint , $request , $method){
         $response = wp_remote_post( $api_endpoint , array(

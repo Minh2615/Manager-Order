@@ -707,48 +707,48 @@ jQuery(document).ready(function($){
     });
 
     //remove products
-    jQuery(document).on('click','.btn.remove_product',function(){
-        $(document).ajaxSend(function() {
-            $("#overlay").fadeIn(300);　
-        });
-        var parent_id = jQuery(this).closest('.content-remove').find('input[name="parent_sku"]').val();
-        var token = jQuery(this).closest('.content-remove').find('input[name="access_token"]').val();
-        jQuery.ajax({
-            url : mo_localize_script.ajaxurl,
-            type: "post",
-            data: {
-                action: 'remove_product_mpo',
-                parent_id : parent_id,
-                token : token,
-            },
-            success: function(result){ 
-                console.log(result);
-                var remove_mes = result.data.message;
-                if(remove_mes === ""){
-                        swal({title: "Success", type: 
-                            "success"});
-                }else{
-                    swal({title: remove_mes , type: 
-                        "error"}).then(function(){ 
-                            location.reload();
-                        }
-                    );
-                }               
-            },
-            error: function(xhr){
-                swal({title: "Error", type: 
-                    "error"}).then(function(){ 
-                        location.reload();
-                    }
-                );
-                console.log(xhr.status);
-            },
-        }).done(function() {
-            setTimeout(function(){
-              $("#overlay").fadeOut(300);
-            },500);
-        });
-    });
+    // jQuery(document).on('click','.btn.remove_product',function(){
+    //     $(document).ajaxSend(function() {
+    //         $("#overlay").fadeIn(300);　
+    //     });
+    //     var parent_id = jQuery(this).closest('.content-remove').find('input[name="parent_sku"]').val();
+    //     var token = jQuery(this).closest('.content-remove').find('input[name="access_token"]').val();
+    //     jQuery.ajax({
+    //         url : mo_localize_script.ajaxurl,
+    //         type: "post",
+    //         data: {
+    //             action: 'remove_product_mpo',
+    //             parent_id : parent_id,
+    //             token : token,
+    //         },
+    //         success: function(result){ 
+    //             console.log(result);
+    //             var remove_mes = result.data.message;
+    //             if(remove_mes === ""){
+    //                     swal({title: "Success", type: 
+    //                         "success"});
+    //             }else{
+    //                 swal({title: remove_mes , type: 
+    //                     "error"}).then(function(){ 
+    //                         location.reload();
+    //                     }
+    //                 );
+    //             }               
+    //         },
+    //         error: function(xhr){
+    //             swal({title: "Error", type: 
+    //                 "error"}).then(function(){ 
+    //                     location.reload();
+    //                 }
+    //             );
+    //             console.log(xhr.status);
+    //         },
+    //     }).done(function() {
+    //         setTimeout(function(){
+    //           $("#overlay").fadeOut(300);
+    //         },500);
+    //     });
+    // });
 
     //create camp
     jQuery(document).on('click','.create_camp',function(){
@@ -926,6 +926,7 @@ jQuery(document).ready(function($){
         }else{
             checked = '';
         }
+        
 
         swal({
             title: 'Update Campaign',
@@ -942,7 +943,16 @@ jQuery(document).ready(function($){
                 '<input data-toggle="datepicker_end" type="text" id="#swal-input1" class="form-control w-right" placeholder="End Date" name="end_date_camp"></div>'+
                 '<div class="input-group mb-3 col-lg-12">' +
                 '<div class="input-group-prepend w-left"><span class="input-group-text">Camp state</span></div>'+ 
-                '<input type="text" class="form-control w-right" placeholder="Amount max Budget" name="camp_state" value="'+camp_state_old+ '"></div>'+
+                '<select class="custom-select mr-sm-2 change_camp_stt" name="camp_state">'+
+                '<option value="SAVED">SAVED (Lưu lại)</option>' +
+                '<option value="NEW">NEW (Mới)</option>' +
+                '<option value="STARTED">STARTED (Đã bắt đầu)</option>'+
+                '<option value="ENDED">ENDED (Kết thúc)</option>'+
+                '<option value="CANCELLED">CANCELLED (Hủy camp)</option>'+
+                '<option value="PENDING">PENDING (Đang chờ xử lý)</option>'+
+                '</select>'+
+                // '<input type="text" class="form-control w-right" placeholder="Amount max Budget" name="camp_state" value="'+camp_state_old+ '">
+                '</div>'+
                 '<div class="input-group mb-3 col-lg-12">' +
                 '<div class="input-group-prepend w-left"><span class="input-group-text">Amount budget ($)</span></div>'+ 
                 '<input type="text" class="form-control w-right" placeholder="Amount max Budget" name="max_budget" value="'+ max_budget_old + '"></div>'+
@@ -967,6 +977,7 @@ jQuery(document).ready(function($){
                         inline: true,
                         zIndex: 999999
                     });
+                    jQuery("select.change_camp_stt").val(camp_state_old);
                     $('[data-toggle="datepicker_start"]').datepicker('setDate',start_at_old);
 
                     $('[data-toggle="datepicker_end"]').datepicker({
@@ -990,6 +1001,7 @@ jQuery(document).ready(function($){
                     var scheduled_add_budget_amount = jQuery('input[name="scheduled_add_budget_amount"]').val();
                     var scheduled_add_budget_days = jQuery('input[name="scheduled_add_budget_days"]').val();
                     var camp_renew = jQuery('input#renew_cam_update').prop("checked");
+                    var state_camp = jQuery("select.change_camp_stt").val();
 
                     return new Promise(function (resolve) {
                       jQuery.ajax({
@@ -1009,6 +1021,7 @@ jQuery(document).ready(function($){
                             scheduled_add_budget_days: scheduled_add_budget_days,
                             currency_code: currency_code,
                             camp_renew : camp_renew,
+                            state_camp : state_camp
                         },
                       })
                         .done(function (rs) {

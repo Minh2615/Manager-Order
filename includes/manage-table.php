@@ -40,6 +40,7 @@ class Mpo_Table{
 		$this->mpo_order();
 		$this->mpo_product();
 		$this->mpo_campaign();
+		$this->mpo_skuProduct();
 		$this->addColumnRefeshTokenConfigMpo();
 		$this->addColumnExpiryTimeConfigMpo();
 		$this->addColumnNoteConfigMpo();
@@ -165,6 +166,8 @@ class Mpo_Table{
 
 		dbDelta( $sql );
 	}
+
+	
 	private function mpo_campaign(){
 		$table_name = $this->_wpdb->prefix . 'mpo_campaign';
 
@@ -207,6 +210,20 @@ class Mpo_Table{
 
 
 	dbDelta( $sql );
+	}
+
+	private function mpo_skuProduct() {
+		$table_name = $this->_wpdb->prefix . 'mpo_sku_product';
+
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				parent_sku varchar(255) NOT NULL,
+                access_token  varchar(255) NOT NULL,
+				name_file varchar(255) NOT NULL,
+                PRIMARY KEY  (id)
+			) " . $this->_charset_collate . ';';
+
+		dbDelta( $sql );
 	}
 	private function addColumnNoteConfigMpo() {
 		global $wpdb;

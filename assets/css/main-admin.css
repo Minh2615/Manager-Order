@@ -181,3 +181,7 @@ input#renew_cam_update {
 .form-control.w-right {
 	width: 70%;
 }
+
+select.change_camp_stt{
+	font-size: 16px;
+}
