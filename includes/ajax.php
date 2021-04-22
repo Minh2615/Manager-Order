@@ -450,13 +450,16 @@ class ManagerOrderAjax {
             $offset = ($page-1) * $limit;
             if($page==1){
                 $response = $this->start_remove_product_merchant($offset,$limit,$name_file,$token);
+
+                return $response;
+                
             }else{
                 wp_schedule_single_event( time() + $time, 'remove_product_mpo',array($offset,$limit,$name_file,$token));
             }
             $time +=60;
         }
 
-        return $response;
+        
     }
     
     public function start_upload_product_merchant($offset, $limit ,$name_file, $token){

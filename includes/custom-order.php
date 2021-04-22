@@ -48,7 +48,7 @@ class CustomOrder{
             $param_kv = 'AND '.$_GET['key_search'].'='.'"'.$_GET['val_search'].'"'.'';
         }
 
-        $records_per_page = 50;
+        $records_per_page = 100;
 
         $offset = ($pageno-1) * $records_per_page;
         //order time
