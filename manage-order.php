@@ -119,15 +119,7 @@ class ManagerOrder{
             array($this,'mpo_list_campaign_callback'),
         );
 
-        add_submenu_page( 
-            'manager_order',
-            __( 'Remove Product', 'order_sandbox' ),
-            __( 'Remove Product', 'order_sandbox' ),
-            'manage_options',
-            'mpo_remove_product',
-            array($this,'mpo_remove_products_callback'),
-        );
-        
+    
     }
 
     public function mpo_config_callback(){
@@ -136,9 +128,6 @@ class ManagerOrder{
 
     public function mpo_list_order_callback(){
         require_once plugin_dir_path(__FILE__).'/includes/custom-order.php';
-    }
-    public function mpo_remove_products_callback(){
-        require_once plugin_dir_path(__FILE__).'/templates/remove-product.php';
     }
 
     public function mpo_order_history_callback(){
