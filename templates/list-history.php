@@ -77,7 +77,6 @@
                 <th scope="col"><?php echo __( 'Warehouse Name (Warehouse Id)', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Payment Status', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Ship to', 'order_sandbox' ); ?></th>
-                <th scope="col"><?php echo __( 'Shipment Details', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Note', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'NoteCC', 'order_sandbox' ); ?></th>
                 <th scope="col"><?php echo __( 'Tracking Number', 'order_sandbox' ); ?></th>
@@ -143,7 +142,6 @@
                         <p class="tracking_confirmed" style="display:none"><?php echo $value->tracking_confirmed ?></p>
                     </div>
                     <?php echo $value->shipping_name; ?></td>
-                <td class="shipment_detail">adasdasdasd</td>
                 <td class="row_order_note">
                     <span class="icon_note"><i class="fa fa-pencil-square" aria-hidden="true"></i></span>
                     <textarea class="order_note" name="order_note" cols="20">

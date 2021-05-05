@@ -628,15 +628,15 @@ jQuery(document).ready(function($){
             processData: false,
             contentType: false,
             success: function(result){ 
-                // var data_name = result.data.name;
-                // var data_token = result.data.token;
-                // var current = new Date(jQuery.now());
-                // window.localStorage.removeItem('name_file' );
-                // window.localStorage.removeItem('app_token' );
-                // var file_name = window.localStorage.setItem("name_file", data_name );
-                // var app_token = window.localStorage.setItem("app_token", data_token );
+                var data_name = result.data.name;
+                var data_token = result.data.token;
+                var current = new Date(jQuery.now());
+                window.localStorage.removeItem('name_file' );
+                window.localStorage.removeItem('app_token' );
+                var file_name = window.localStorage.setItem("name_file", data_name );
+                var app_token = window.localStorage.setItem("app_token", data_token );
                console.log(result);
-                if(result.data.code === false){
+                if(result.response.code != 200){
                     swal({title:"Import Database Error", type: 
                         "error"}).then(function(){ 
                             location.reload(true);
@@ -652,7 +652,10 @@ jQuery(document).ready(function($){
             },
             error: function(xhr){
                 swal({title: "Error", type: 
-                    "error"});
+                    "error"}).then(function(){ 
+                        location.reload(true);
+                    });
+                
                 console.log(xhr.status);
             },
         }).done(function() {
