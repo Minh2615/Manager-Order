@@ -77,10 +77,42 @@ class ManagerOrderAjax {
 
         // upload token after 30 days
 
-
+        add_action('schedule_refesh_token_new', array($this,'refesh_token_new'),10,3);
 
 	}
 
+    /**
+     * Refesh token new
+     */
+    public function refesh_token_new($refesh_token,$client_id,$client_secret){
+
+        global $wpdb;
+
+        $api_endpoint = 'https://merchant.wish.com/api/v3/oauth/refresh_token';
+
+        $request = array(
+            'client_id'=>$client_id,
+            'client_secret'=>$client_secret,
+            'refresh_token'=>$refesh_token,
+            'grant_type'=>'refresh_token',
+        );
+
+        $data = $this->request_manager_order($api_endpoint,$request,'GET');
+
+        $expiry_time = $data->data->expiry_time;
+
+        $token = $data->data->access_token;
+
+        $wpdb->update($wpdb->prefix . 'mpo_config', array('access_token'=>$token , 'refesh_token'=>$refesh_token , 'expiry_time'=>$expiry_time) ,array( 'client_id' => $client_id ));
+
+        wp_schedule_single_event( time() + 30 * 86400, 'schedule_refesh_token_new',array($refesh_token,$client_id,$client_secret));
+        
+    }
+
+    
+    /**
+     * Save data store end get code before get token
+     */
     public function sent_client_id(){
 
         global $wpdb;
@@ -105,6 +137,10 @@ class ManagerOrderAjax {
         die();
     }
 
+    /**
+     * Get token store
+     * 
+     */
 
     public function get_access_token(){
 
@@ -132,11 +168,17 @@ class ManagerOrderAjax {
 
         $wpdb->update($wpdb->prefix . 'mpo_config', array('access_token'=>$token , 'refesh_token'=>$refesh_token , 'expiry_time'=>$expiry_time) ,array( 'client_id' => $client_id ));
 
+        wp_schedule_single_event( time() + 30 * 86400, 'schedule_refesh_token_new',array($refesh_token,$client_id,$client_secret));
+        
         wp_send_json_success($parsed_response);
 
         die();
     }  
 
+    /**
+     * Get list order
+     * 
+     */
     public function get_list_order() {
         
         $token = isset($_POST['token']) ? $_POST['token'] : '';
@@ -149,6 +191,7 @@ class ManagerOrderAjax {
 
         die();
     }
+
 
     public function request_list_order_mpo($token, $client_id){
         
@@ -173,6 +216,8 @@ class ManagerOrderAjax {
 
         return $this->update_db_order_mpo($obj , $token , $client_id);
     }
+
+
     public function update_db_order_mpo($respons , $token , $client_id){
 
         global $wpdb;
@@ -233,6 +278,12 @@ class ManagerOrderAjax {
         }
     }
 
+    
+    /**
+     * Upadte tracking ID
+     * 
+     */
+
     public function update_tracking_id(){
         
         global $wpdb;
@@ -272,6 +323,12 @@ class ManagerOrderAjax {
 
         die();
     }
+
+    
+    /**
+     * Update status order
+     * 
+     */
 
     public function auto_update_status_order_mpo(){
 
@@ -313,13 +370,10 @@ class ManagerOrderAjax {
         global $wpdb;
 
         $client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
-
         $token = isset($_POST['token']) ? $_POST['token'] : '';
 
         $update_config = $wpdb->delete($wpdb->prefix.'mpo_config',array('client_id'=>$client_id));
-
         $update_order = $wpdb->delete($wpdb->prefix.'mpo_order',array('client_id'=>$client_id));
-
         $update_product = $wpdb->delete($wpdb->prefix.'mpo_product',array('access_token'=>$token));
 
         wp_send_json_success($update_config);
@@ -336,6 +390,10 @@ class ManagerOrderAjax {
         }
     }   
 
+    /**
+     * Upload product by csv
+     * 
+     */
     public function upload_csv_product_mpo(){
         global $wpdb;
 
@@ -415,6 +473,11 @@ class ManagerOrderAjax {
         die();
 
     }
+
+    /**
+     * Remove products
+     * 
+     */
     public function start_remove_product_merchant($offset , $limit ,$name_file,$token){
         global $wpdb;
 
@@ -450,7 +513,6 @@ class ManagerOrderAjax {
             $offset = ($page-1) * $limit;
             if($page==1){
                 $response = $this->start_remove_product_merchant($offset,$limit,$name_file,$token);
-
                 return $response;
                 
             }else{
@@ -582,7 +644,10 @@ class ManagerOrderAjax {
     }
 
 
-    //start camp
+    /**
+     * Create campaign
+     * 
+     */
 
     public function create_campaign_mpo(){
         global $wpdb;

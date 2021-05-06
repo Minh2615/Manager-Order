@@ -60,7 +60,6 @@ jQuery(document).ready(function($){
                 code: code,
             },
             success: function(result){
-                
                var kq = result.data;
                console.log(kq);
                var data = kq.data;
