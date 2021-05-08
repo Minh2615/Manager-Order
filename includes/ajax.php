@@ -61,11 +61,11 @@ class ManagerOrderAjax {
 
         //
         add_action('update_new_order_mpo',array($this,'auto_update_new_order_mpo'));
-        wp_schedule_single_event( time() + 3600, 'update_new_order_mpo' );
+        wp_schedule_single_event( time() + 900, 'update_new_order_mpo' );
 
         //
         add_action('update_status_order_mpo',array($this,'auto_update_status_order_mpo'));
-        wp_schedule_single_event( time() + 3600, 'update_status_order_mpo' );
+        wp_schedule_single_event( time() + 1800, 'update_status_order_mpo' );
 
         //
         add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
@@ -121,10 +121,7 @@ class ManagerOrderAjax {
         $client_secret = isset($_POST['client_secret']) ? $_POST['client_secret'] : '';
         $redirect_uri = isset($_POST['redirect_uri']) ? $_POST['redirect_uri'] : '';
         $name_app = isset($_POST['name_app']) ? $_POST['name_app'] : '';
-        
-        // $rs = $wpdb->get_results( "SELECT * FROM mpo_config WHERE ID {$client_id}");
-        
-        // if(!$rs){
+
             $wpdb->replace($wpdb->prefix . 'mpo_config', array(
                 'name_app'=>$name_app,
                 'client_id' => $client_id,
@@ -132,8 +129,6 @@ class ManagerOrderAjax {
                 'redirect_uri' => $redirect_uri,
             ));
         
-       
-
         die();
     }
 
@@ -404,7 +399,10 @@ class ManagerOrderAjax {
         $name = $_FILES["file_product"]["name"];
         $result['name'] = $name;
         $file = fopen($fileName_tmp, 'r');
-        fgetcsv($file);
+
+        $get_csv = fgetcsv( $file );
+
+        print_r($get_csv ); die;
 
         $row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
         // check button remove or upload product
