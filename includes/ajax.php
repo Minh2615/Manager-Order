@@ -79,6 +79,13 @@ class ManagerOrderAjax {
 
         add_action('schedule_refesh_token_new', array($this,'refesh_token_new'),10,3);
 
+        //upload product after upload csv
+        add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
+		add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
+
+        // remove product after upload csv
+        add_action( 'wp_ajax_auto_romove_product_merchant', array( $this, 'auto_romove_product_merchant' ));
+		add_action( 'wp_ajax_nopriv_auto_romove_product_merchant', array( $this, 'auto_romove_product_merchant'));
 	}
 
     /**
@@ -392,81 +399,59 @@ class ManagerOrderAjax {
     public function upload_csv_product_mpo(){
         global $wpdb;
 
+        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
+        $action_form = isset($_POST['action_form']) ? $_POST['action_form'] : '';
+        $data = json_decode(stripslashes($_POST['data_csv']));
 
-        $fileName_tmp = $_FILES["file_product"]["tmp_name"];
-        $result = array();
-        $name = $_FILES["file_product"]["name"];
-        $result['name'] = $name;
-        $file = fopen($fileName_tmp, 'r');
-        fgetcsv($file);
-
-        $row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
-        // check button remove or upload product
-
-        if ($_POST['action_form'] == 'upload_product') {
-            if ($_FILES["file_product"]["size"] > 0) {
-                while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
-                   $arr_insert = array(
-                        'name_file'=>$name,
+        if($action_form == "upload_product") {
+            foreach($data as $key => $value){
+                if($key > 0){
+                    $arr_insert = array(
+                        'name_file'=>$name_file,
                         'access_token'=>$token,
-                        'product_parent' => $column[0],
-                        'product_sku'=> $column[1],
-                        'product_upc'=> $column[2],
-                        'merchant_name'=> $column[3],
-                        'product_name'=> $column[4],
-                        'declared_name'=> $column[5],
-                        'declared_local_name'=> $column[6],
-                        'product_pieces'=> $column[7],
-                        'product_color'=> $column[8],
-                        'product_size'=> $column[9],
-                        'product_quantity'=> $column[10],
-                        'product_tags'=> $column[11],
-                        'localized_currency_code'=> $column[12],
-                        'product_des'=> $column[13],
-                        'product_price'=> $column[14],
-                        'localized_shipping'=> $column[15],
-                        'product_shipping'=> $column[16],
-                        'shipping_time'=> $column[17],
-                        'landing_page_url'=> $column[18],
-                        'product_img'=> $column[19],
+                        'product_parent' => $value[0],
+                        'product_sku'=> $value[1],
+                        'product_upc'=> $value[2],
+                        'merchant_name'=> $value[3],
+                        'product_name'=> $value[4],
+                        'declared_name'=> $value[5],
+                        'declared_local_name'=> $value[6],
+                        'product_pieces'=> $value[7],
+                        'product_color'=> $value[8],
+                        'product_size'=> $value[9],
+                        'product_quantity'=> $value[10],
+                        'product_tags'=> $value[11],
+                        'localized_currency_code'=> $value[12],
+                        'product_des'=> $value[13],
+                        'product_price'=> $value[14],
+                        'localized_shipping'=> $value[15],
+                        'product_shipping'=> $value[16],
+                        'shipping_time'=> $value[17],
+                        'landing_page_url'=> $value[18],
+                        'product_img'=> $value[19],
                    );
-    
+
                     $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
                     $result['code'] = $import;
                 }
             }
-    
-            fclose($file);
-            
-            $result = $this->auto_upload_product_merchant($name,$token);
-
         }
-        if($_POST['action_form'] == "remove_sku") {
 
-            if ($_FILES["file_product"]["size"] > 0) {
-                while (($column = fgetcsv($file, 10000, ",")) !== FALSE) {
+        if($action_form == "remove_sku") {
+            foreach($data as $key => $value){
+                if($key > 0){
                    $arr_insert = array(
-                        'parent_sku'=>$column[0],
+                        'parent_sku'=>$value[0],
                         'access_token'=>$token,
-                        
                    );
     
                     $import = $wpdb->insert($wpdb->prefix . 'mpo_sku_product',$arr_insert);
                     $result['code'] = $import;
                 }
-            }
-    
-            fclose($file);
-
-            $result = $this->auto_romove_product_merchant($name,$token);
-
+            };
         }
-
-        wp_send_json_success($result);
-
         die();
-
     }
 
     /**
@@ -487,6 +472,8 @@ class ManagerOrderAjax {
             );
     
             $respon = $this->request_manager_order($point_remove, $request , 'POST');
+            
+            $wpdb->delete( $wpdb->prefix.'mpo_product' , array('parent_sku'=>$value->parent_sku ), array('%s') );
         }
 
         wp_send_json_success($respon);
@@ -526,6 +513,7 @@ class ManagerOrderAjax {
         $api_variable = 'https://merchant.wish.com/api/v2/variant/add';
 
         $list_product = $wpdb->get_results("SELECT DISTINCT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
+
         foreach($list_product as $value){
 
             if($value->product_sku == $value->product_parent){
@@ -559,7 +547,7 @@ class ManagerOrderAjax {
                 );
                 $respon = wp_remote_post( $api_product , $arr_request );
                 
-                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%d') );
+                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%s') );
 
             }else{
                 $new_request = array(
@@ -592,16 +580,19 @@ class ManagerOrderAjax {
     
                 $respon =  wp_remote_post( $api_variable , $arr_request );
 
-                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%d') );
+                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%s') );
             }
         }
         return $respon;
 
     }
 
-    public function auto_upload_product_merchant($name_file,$token){
-
+    public function auto_upload_product_merchant(){
+        
         global $wpdb;
+
+        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
 
         $limit = 10;
         $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
@@ -617,9 +608,10 @@ class ManagerOrderAjax {
                 wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit,$name_file,$token));
             }
             $time +=60;
-        }
+        }   
+        wp_send_json_success($response);
 
-        return $response;
+        die();
 
     }
 

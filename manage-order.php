@@ -152,6 +152,7 @@ class ManagerOrder{
 		//wp_register_style( 'gmc-phys-main-css', MO_PHYS_URL . 'assets/css/main-admin.css', array(), '1.0.0' );
 
 		// script
+        wp_enqueue_script( 'mo-phys-papa-js', MO_PHYS_URL . 'assets/js/papaparse.min.js', array(), '5.3.0', true );
         wp_enqueue_script( 'mo-phys-jquery-ui-js', MO_PHYS_URL . 'assets/js/jquery-ui.min.js', array(), '1.12.1', true );
         wp_enqueue_script( 'mo-phys-popper-js', MO_PHYS_URL . 'assets/js/popper.min.js', array(), '1.12.9', true );
         wp_enqueue_script( 'mo-phys-swee-js', MO_PHYS_URL . 'assets/js/sweetalert2.all.min.js', array(), '7.2.0', true );

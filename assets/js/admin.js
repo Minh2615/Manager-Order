@@ -610,44 +610,83 @@ jQuery(document).ready(function($){
         });
     }
 
-    //upload csv
-    jQuery(document).on('submit','#frmCSVImport', function(e){
-        e.preventDefault();
-        $(document).ajaxSend(function() {
-            $("#overlay").fadeIn(300);　
+   
+    jQuery(document).on('click','.submit_csv',function(){
+        jQuery(document).ajaxSend(function() {
+            jQuery("#overlay").fadeIn(300);　
         });
-        
-        var postData = new FormData(this);  
-        postData.append('action', 'upload_csv_product_mpo');
+        var name_file = jQuery(this).closest('.frmCSVImport').find('input[name="file_product"]').val().replace(/C:\\fakepath\\/i, '');
+        var token = jQuery(this).closest('.frmCSVImport').find('input[name="access_token"]').val();
+        var action_form = jQuery(this).closest('.frmCSVImport').find('select[name="action_form"]').val();
+        jQuery('input[name="file_product"]').parse({
+            config: {
+                complete: function(results, file) {
+                    var data_csv = results.data;  
+                    var newDataLength = 0;
 
+                    run_import( data_csv, newDataLength, name_file, token , action_form );            
+                }
+            },
+        });
+    });
+
+    function run_import( data_csv, newDataLength, name_file, token , action_form ) {
+
+        var newData = data_csv.slice( newDataLength, newDataLength + 3000 );
+        
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
+            cache: false,
             type: "POST",
-            data : postData,
-            processData: false,
-            contentType: false,
-            success: function(result){ 
-                var data_name = result.data.name;
-                var data_token = result.data.token;
-                var current = new Date(jQuery.now());
-                window.localStorage.removeItem('name_file' );
-                window.localStorage.removeItem('app_token' );
-                var file_name = window.localStorage.setItem("name_file", data_name );
-                var app_token = window.localStorage.setItem("app_token", data_token );
-               console.log(result);
-                if(result.response.code != 200){
-                    swal({title:"Import Database Error", type: 
-                        "error"}).then(function(){ 
-                            location.reload(true);
-                        }
-                    );
+            data: {
+                action: 'upload_csv_product_mpo',
+                data_csv: JSON.stringify( newData ),
+                name_file : name_file,
+                access_token : token,
+                action_form: action_form,
+            },
+            success: function( result ){
+                var dataCsv = data_csv;
+                newDataLength = newDataLength + 3000;
+                if ( newDataLength <= dataCsv.length ) {
+                    run_import( dataCsv, newDataLength, name_file, token , action_form);
                 }else{
-                    swal({title: "Success", type: 
-                        "success"}).then(function(){ 
-                            location.reload(true);
-                        }
-                    );
-                }               
+                    var action_ajax = '';
+                    if(action_form = 'upload_product'){
+                        action_ajax = 'auto_upload_product_merchant';
+                    }else{
+                        action_ajax = 'auto_romove_product_merchant';
+                    }
+                    jQuery.ajax({
+                        url : mo_localize_script.ajaxurl,
+                        type: "post",
+                        data: {
+                            action: action_ajax,
+                            name_file : name_file,
+                            access_token : token,
+                        },
+                        success: function(result){ 
+                            console.log(result);
+                            swal({title:"Success", type: 
+                                "success"}).then(function(){ 
+                                    location.reload(true);
+                                }
+                            );         
+                        },
+                        error: function(xhr){
+                            swal({title: "Error", type: 
+                                "error"}).then(function(){ 
+                                    location.reload();
+                                }
+                            );
+                            console.log(xhr.status);
+                        },
+                    }).done(function() {
+                        setTimeout(function(){
+                            $("#overlay").fadeOut(300);
+                        },500);
+                    });
+                }    
             },
             error: function(xhr){
                 swal({title: "Error", type: 
@@ -657,13 +696,9 @@ jQuery(document).ready(function($){
                 
                 console.log(xhr.status);
             },
-        }).done(function() {
-            setTimeout(function(){
-              $("#overlay").fadeOut(300);
-            },500);
-        });
-    });
 
+        });
+    }
 
     //note config app
     jQuery('.icon_note_app').hide();
@@ -702,7 +737,11 @@ jQuery(document).ready(function($){
                 );
                 console.log(xhr.status);
             },
-        })
+        }).done(function() {
+            setTimeout(function(){
+                $("#overlay").fadeOut(300);
+            },500);
+        });
     });
     $("textarea").each(function(){
         $(this).val($(this).val().trim());

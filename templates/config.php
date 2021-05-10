@@ -77,9 +77,7 @@
                     <button type="button" class="btn btn-info view_order">VIEW</button>
                 </td>
                 <td class="form_upload">
-                    <form class="form-horizontal" action="" method="post"
-                        name="frmCSVImport" id="frmCSVImport"
-                        enctype="multipart/form-data">
+                    <div class="frmCSVImport">
                         <div class="form-row align-items-center">
                             <div class="col-auto my-1">
                             <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
@@ -95,10 +93,10 @@
                                 </div>
                             </div>
                             <div class="col-auto my-1">
-                                <button type="submit" class="btn btn-info"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                                <div class="btn btn-info submit_csv"><i class="fa fa-upload" aria-hidden="true"></i></div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </td>
                 <td class="note_app">
                     <span class="icon_note_app"><i class="fa fa-pencil-square" aria-hidden="true"></i></span>
