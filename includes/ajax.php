@@ -399,7 +399,7 @@ class ManagerOrderAjax {
         $name = $_FILES["file_product"]["name"];
         $result['name'] = $name;
 
-        $row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
+        //$row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
         // check button remove or upload product
 
         if ($_POST['action_form'] == 'upload_product') {
