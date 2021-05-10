@@ -398,11 +398,6 @@ class ManagerOrderAjax {
         $result = array();
         $name = $_FILES["file_product"]["name"];
         $result['name'] = $name;
-        $file = fopen($fileName_tmp, 'r');
-
-        $get_csv = fgetcsv( $file );
-
-        print_r($get_csv ); die;
 
         $row = count(file($fileName_tmp, FILE_SKIP_EMPTY_LINES));
         // check button remove or upload product
