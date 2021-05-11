@@ -158,7 +158,7 @@ class ManagerOrder{
         wp_enqueue_script( 'mo-phys-swee-js', MO_PHYS_URL . 'assets/js/sweetalert2.all.min.js', array(), '7.2.0', true );
 		wp_enqueue_script( 'mo-phys-bootstrap-js', MO_PHYS_URL . 'assets/js/bootstrap.min.js', array(), '4.3.1', true );
         wp_enqueue_script( 'mo-phys-toggle-js', MO_PHYS_URL . 'assets/js/bootstrap4-toggle.min.js', array(), '3.6.1', true );
-		wp_enqueue_script( 'mo-phys-admin-js', MO_PHYS_URL . 'assets/js/admin.js', array( 'jquery' ), $v_rand, true );
+		wp_enqueue_script( 'mo-phys-admin-js', MO_PHYS_URL . 'assets/js/admin.js', array( 'jquery', 'wp-api-fetch' ), $v_rand, true );
         wp_localize_script( 'mo-phys-admin-js', 'mo_localize_script',
             array( 
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),

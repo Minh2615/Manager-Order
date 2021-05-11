@@ -68,7 +68,7 @@ class ManagerOrderAjax {
         wp_schedule_single_event( time() + 1800, 'update_status_order_mpo' );
 
         //
-        add_action('upload_product_mpo', array($this,'start_upload_product_merchant'),10,4);
+    
         //
         add_action('remove_product_mpo', array($this,'start_remove_product_merchant'),10,4);
         //
@@ -80,8 +80,8 @@ class ManagerOrderAjax {
         add_action('schedule_refesh_token_new', array($this,'refesh_token_new'),10,3);
 
         //upload product after upload csv
-        add_action( 'wp_ajax_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant' ));
-		add_action( 'wp_ajax_nopriv_auto_upload_product_merchant', array( $this, 'auto_upload_product_merchant'));
+        add_action( 'wp_ajax_start_upload_product_merchant', array( $this, 'start_upload_product_merchant' ));
+		add_action( 'wp_ajax_nopriv_start_upload_product_merchant', array( $this, 'start_upload_product_merchant'));
 
         // remove product after upload csv
         add_action( 'wp_ajax_auto_romove_product_merchant', array( $this, 'auto_romove_product_merchant' ));
@@ -480,138 +480,81 @@ class ManagerOrderAjax {
 
         die();
     }
-
-    public function auto_romove_product_merchant($name_file, $token){
-
-        global $wpdb;
-
-        $limit = 10;
-        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_sku_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
-        
-        $time = 60;
-
-        $total = ceil($count / $limit);
-        for($page = 1; $page<=$total;$page++){
-            $offset = ($page-1) * $limit;
-            if($page==1){
-                $response = $this->start_remove_product_merchant($offset,$limit,$name_file,$token);
-                return $response;
-                
-            }else{
-                wp_schedule_single_event( time() + $time, 'remove_product_mpo',array($offset,$limit,$name_file,$token));
-            }
-            $time +=60;
-        }
-
-        
-    }
     
-    public function start_upload_product_merchant($offset, $limit ,$name_file, $token){
-        global $wpdb;
+    public function start_upload_product_merchant(){
 
+        $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
         $api_product = 'https://merchant.wish.com/api/v2/product/add';
         $api_variable = 'https://merchant.wish.com/api/v2/variant/add';
 
-        $list_product = $wpdb->get_results("SELECT DISTINCT * FROM {$wpdb->prefix}mpo_product WHERE name_file='{$name_file}' AND access_token = '{$token}' LIMIT {$offset} , {$limit}");
+        $list_product = json_decode(stripslashes($_POST['data_csv']));
 
-        foreach($list_product as $value){
+        foreach($list_product as $key => $value){
 
-            if($value->product_sku == $value->product_parent){
-                $request = array(
-                    'name'=>$value->product_name,
-                    'description'=>$value->product_des,
-                    'tags'=>$value->product_tags,
-                    'sku'=>$value->product_sku,
-                    'color'=>$value->product_color,
-                    'size'=>$value->product_size,
-                    'inventory'=>$value->product_quantity,
-                    'price'=>$value->product_price,
-                    'localized_currency_code'=>$value->localized_currency_code,
-                    'shipping_time'=>$value->shipping_time,
-                    'main_image'=>$value->product_img,
-                    'parent_sku'=>$value->product_parent,
-                    'landing_page_url'=>$value->landing_page_url,
-                    'upc'=>$value->product_upc,
-                    'declared_name'=>$value->declared_name,
-                    'declared_local_name'=>$value->declared_local_name,
-                    'pieces'=>$value->product_pieces,
-                    'access_token'=>$value->access_token,
-                    'shipping'=>$value->product_shipping
-                );
-                $arr_request = array(
-                    'method'     => 'POST',
-                    'headers'     => array(),
-                    'body'       => $request,
-                    'timeout'    => 70,
-                    'sslverify'  => false,
-                );
-                $respon = wp_remote_post( $api_product , $arr_request );
-                
-                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%s') );
-
-            }else{
-                $new_request = array(
-                    'name'=>$value->product_name,
-                    'description'=>$value->product_des,
-                    'tags'=>$value->product_tags,
-                    'sku'=>$value->product_sku,
-                    'color'=>$value->product_color,
-                    'size'=>$value->product_size,
-                    'inventory'=>$value->product_quantity,
-                    'price'=>$value->product_price,
-                    'localized_currency_code'=>$value->localized_currency_code,
-                    'shipping_time'=>$value->shipping_time,
-                    'main_image'=>$value->product_img,
-                    'parent_sku'=>$value->product_parent,
-                    'landing_page_url'=>$value->landing_page_url,
-                    'upc'=>$value->product_upc,
-                    'declared_name'=>$value->declared_name,
-                    'declared_local_name'=>$value->declared_local_name,
-                    'pieces'=>$value->product_pieces,
-                    'access_token'=>$value->access_token,
-                );
-                $arr_request = array(
-                    'method'     => 'POST',
-                    'headers'     => array(),
-                    'body'       => $new_request,
-                    'timeout'    => 70,
-                    'sslverify'  => false,
-                );
-    
-                $respon =  wp_remote_post( $api_variable , $arr_request );
-
-                $wpdb->delete( $wpdb->prefix.'mpo_product' , array('product_sku'=>$value->product_sku), array('%s') );
+            if($key > 0){
+                if($value[1] == $value[0]){
+                    $request = array(
+                        'name'=>$value[4],
+                        'description'=>$value[13],
+                        'tags'=>$value[11],
+                        'sku'=>$value[1],
+                        'color'=>$value[8],
+                        'size'=>$value[9],
+                        'inventory'=>$value[10],
+                        'price'=>$value[14],
+                        'localized_currency_code'=> $value[12],
+                        'shipping_time'=>$value[17],
+                        'main_image'=>$value[19],
+                        'parent_sku'=>$value[0],
+                        'landing_page_url'=>$value[18],
+                        'upc'=>$value[2],
+                        'declared_name'=>$value[5],
+                        'declared_local_name'=>$value[6],
+                        'pieces'=>$value[7],
+                        'access_token'=>$token,
+                        'shipping'=>$value[16],
+                    );
+                    $arr_request = array(
+                        'method'     => 'POST',
+                        'headers'     => array(),
+                        'body'       => $request,
+                        'timeout'    => 70,
+                        'sslverify'  => false,
+                    );
+                    $respon = wp_remote_post( $api_product , $arr_request );
+                }else{
+                    $new_request = array(
+                        'description'=>$value[13],
+                        'tags'=>$value[11],
+                        'sku'=>$value[1],
+                        'color'=>$value[8],
+                        'size'=>$value[9],
+                        'inventory'=>$value[10],
+                        'price'=>$value[14],
+                        'localized_currency_code'=> $value[12],
+                        'shipping_time'=>$value[17],
+                        'main_image'=>$value[19],
+                        'parent_sku'=>$value[0],
+                        'landing_page_url'=>$value[18],
+                        'upc'=>$value[2],
+                        'declared_name'=>$value[5],
+                        'declared_local_name'=>$value[6],
+                        'pieces'=>$value[7],
+                        'access_token'=>$token,
+                    );
+                    $arr_request = array(
+                        'method'     => 'POST',
+                        'headers'     => array(),
+                        'body'       => $new_request,
+                        'timeout'    => 70,
+                        'sslverify'  => false,
+                    );
+        
+                    $respon =  wp_remote_post( $api_variable , $arr_request );                
+                }
             }
         }
         return $respon;
-
-    }
-
-    public function auto_upload_product_merchant(){
-        
-        global $wpdb;
-
-        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
-        $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
-
-        $limit = 10;
-        $count = absint($wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}mpo_product WHERE name_file = '{$name_file}' AND access_token = '{$token}'"));
-        
-        $time = 60;
-
-        $total = ceil($count / $limit);
-        for($page = 1; $page<=$total;$page++){
-            $offset = ($page-1) * $limit;
-            if($page==1){
-                $response = $this->start_upload_product_merchant($offset,$limit,$name_file,$token);
-            }else{
-                wp_schedule_single_event( time() + $time, 'upload_product_mpo',array($offset,$limit,$name_file,$token));
-            }
-            $time +=60;
-        }   
-        wp_send_json_success($response);
-
-        die();
 
     }
 

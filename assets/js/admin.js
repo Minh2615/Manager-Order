@@ -632,60 +632,40 @@ jQuery(document).ready(function($){
 
     function run_import( data_csv, newDataLength, name_file, token , action_form ) {
 
-        var newData = data_csv.slice( newDataLength, newDataLength + 3000 );
-        
+        var newData = data_csv.slice( newDataLength, newDataLength + 10 );
+        var action_ajax = '';
+        if(action_form = 'upload_product'){
+            action_ajax = 'start_upload_product_merchant';
+        }else{
+            action_ajax = 'start_remove_product_merchant';
+        }
         jQuery.ajax({
             url : mo_localize_script.ajaxurl,
             cache: false,
             type: "POST",
             data: {
-                action: 'upload_csv_product_mpo',
+                action: action_ajax,
                 data_csv: JSON.stringify( newData ),
                 name_file : name_file,
                 access_token : token,
                 action_form: action_form,
             },
             success: function( result ){
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
                 var dataCsv = data_csv;
-                newDataLength = newDataLength + 3000;
+                newDataLength = newDataLength + 10;
                 if ( newDataLength <= dataCsv.length ) {
                     run_import( dataCsv, newDataLength, name_file, token , action_form);
                 }else{
-                    var action_ajax = '';
-                    if(action_form = 'upload_product'){
-                        action_ajax = 'auto_upload_product_merchant';
-                    }else{
-                        action_ajax = 'auto_romove_product_merchant';
-                    }
-                    jQuery.ajax({
-                        url : mo_localize_script.ajaxurl,
-                        type: "post",
-                        data: {
-                            action: action_ajax,
-                            name_file : name_file,
-                            access_token : token,
-                        },
-                        success: function(result){ 
-                            console.log(result);
-                            swal({title:"Success", type: 
-                                "success"}).then(function(){ 
-                                    location.reload(true);
-                                }
-                            );         
-                        },
-                        error: function(xhr){
-                            swal({title: "Error", type: 
-                                "error"}).then(function(){ 
-                                    location.reload();
-                                }
-                            );
-                            console.log(xhr.status);
-                        },
-                    }).done(function() {
-                        setTimeout(function(){
-                            $("#overlay").fadeOut(300);
-                        },500);
-                    });
+                    console.log(result);
+
+                    // swal({title:"Success", type: 
+                    //     "success"}).then(function(){ 
+                    //         location.reload(true);
+                    //     }
+                    // );  
                 }    
             },
             error: function(xhr){
