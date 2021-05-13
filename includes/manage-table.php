@@ -46,6 +46,7 @@ class Mpo_Table{
 		$this->addColumnNoteConfigMpo();
 		$this->addColumnNameCampaign();
 		$this->addColumnProductIdCamp();
+		$this->addColumnMessagerUploadProducts();
 	}
 	private function addColumnExpiryTimeConfigMpo(){
 
@@ -55,6 +56,18 @@ class Mpo_Table{
 
 		$sql = "ALTER TABLE $table_name
 				ADD expiry_time varchar(255) AFTER name_app";
+
+		$wpdb->query($sql);
+	}
+
+	private function addColumnMessagerUploadProducts(){
+
+		global $wpdb;
+
+		$table_name = $this->_wpdb->prefix . 'mpo_config';
+
+		$sql = "ALTER TABLE $table_name
+				ADD mess_upload varchar(255) AFTER expiry_time";
 
 		$wpdb->query($sql);
 	}

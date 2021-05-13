@@ -41,9 +41,6 @@ class ManagerOrderAjax {
         add_action( 'wp_ajax_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 		add_action( 'wp_ajax_nopriv_save_note_order_cc_mpo', array( $this, 'save_note_order_cc_mpo' ) );
 
-        add_action( 'wp_ajax_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
-		add_action( 'wp_ajax_nopriv_upload_csv_product_mpo', array( $this, 'upload_csv_product_mpo' ) );
-
         // add_action( 'wp_ajax_remove_product_mpo', array( $this, 'remove_product_mpo' ));
 		// add_action( 'wp_ajax_nopriv_remove_product_mpo', array( $this, 'remove_product_mpo'));
 
@@ -86,6 +83,11 @@ class ManagerOrderAjax {
         // remove product after upload csv
         add_action( 'wp_ajax_auto_romove_product_merchant', array( $this, 'auto_romove_product_merchant' ));
 		add_action( 'wp_ajax_nopriv_auto_romove_product_merchant', array( $this, 'auto_romove_product_merchant'));
+
+        add_action( 'wp_ajax_save_messages_after_upload_product', array( $this, 'save_messages_after_upload_product' ));
+		add_action( 'wp_ajax_nopriv_save_messages_after_upload_product', array( $this, 'save_messages_after_upload_product'));
+
+
 	}
 
     /**
@@ -393,70 +395,8 @@ class ManagerOrderAjax {
     }   
 
     /**
-     * Upload product by csv
-     * 
-     */
-    public function upload_csv_product_mpo(){
-        global $wpdb;
-
-        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
-        $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
-        $action_form = isset($_POST['action_form']) ? $_POST['action_form'] : '';
-        $data = json_decode(stripslashes($_POST['data_csv']));
-
-        if($action_form == "upload_product") {
-            foreach($data as $key => $value){
-                if($key > 0){
-                    $arr_insert = array(
-                        'name_file'=>$name_file,
-                        'access_token'=>$token,
-                        'product_parent' => $value[0],
-                        'product_sku'=> $value[1],
-                        'product_upc'=> $value[2],
-                        'merchant_name'=> $value[3],
-                        'product_name'=> $value[4],
-                        'declared_name'=> $value[5],
-                        'declared_local_name'=> $value[6],
-                        'product_pieces'=> $value[7],
-                        'product_color'=> $value[8],
-                        'product_size'=> $value[9],
-                        'product_quantity'=> $value[10],
-                        'product_tags'=> $value[11],
-                        'localized_currency_code'=> $value[12],
-                        'product_des'=> $value[13],
-                        'product_price'=> $value[14],
-                        'localized_shipping'=> $value[15],
-                        'product_shipping'=> $value[16],
-                        'shipping_time'=> $value[17],
-                        'landing_page_url'=> $value[18],
-                        'product_img'=> $value[19],
-                   );
-
-                    $import = $wpdb->insert($wpdb->prefix . 'mpo_product',$arr_insert);
-                    $result['code'] = $import;
-                }
-            }
-        }
-
-        if($action_form == "remove_sku") {
-            foreach($data as $key => $value){
-                if($key > 0){
-                   $arr_insert = array(
-                        'parent_sku'=>$value[0],
-                        'access_token'=>$token,
-                   );
-    
-                    $import = $wpdb->insert($wpdb->prefix . 'mpo_sku_product',$arr_insert);
-                    $result['code'] = $import;
-                }
-            };
-        }
-        die();
-    }
-
-    /**
      * Remove products
-     * 
+     * Sẽ custom lại (13-5-2021)
      */
     public function start_remove_product_merchant($offset , $limit ,$name_file,$token){
         global $wpdb;
@@ -481,6 +421,10 @@ class ManagerOrderAjax {
         die();
     }
     
+    /**
+     * Upload products
+     * 
+     */
     public function start_upload_product_merchant(){
 
         $token = isset($_POST['access_token']) ? $_POST['access_token'] : '';
@@ -558,6 +502,20 @@ class ManagerOrderAjax {
 
     }
 
+    public function save_messages_after_upload_product(){
+        global $wpdb;
+
+        $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
+        $client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
+        $name_store = isset($_POST['name_store']) ? $_POST['name_store'] : '';
+        $now = new DateTime();
+        $mess = 'Upload File: '. $name_file .' Success by: '. $name_store . ' at : ' . $now->format('Y-m-d H:i:s');
+
+        $update_note = $wpdb->update($wpdb->prefix.'mpo_config', array('mess_upload' => $mess) ,array( 'client_id' => $client_id ));
+
+        die();
+
+    }
     public function save_note_config_app_mpo(){
 
         global $wpdb;

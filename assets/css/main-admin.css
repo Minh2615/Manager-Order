@@ -185,3 +185,11 @@ input#renew_cam_update {
 select.change_camp_stt{
 	font-size: 16px;
 }
+
+.content-cmt {
+	max-height: 250px;
+	overflow-y: auto;
+}
+.content-cmt p{
+	font-size: 18px;
+}

@@ -3,34 +3,50 @@
     <span class="spinner_order"></span>
   </div>
 </div>
-<div class="container mt-5">
-    <div class="input-group mb-3 col-lg-4 mx-auto">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
+<div class="container-fluid mt-5 d-flex justify-content-center">
+    <div class="col-lg-5">
+        <h3 class="col-lg-12 mb-3">Create Stores</h3>
+        <div class="content-config">
+            <div class="input-group mb-3 col-lg-8">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Name App" name="name_app">
+            </div>
+            <div class="input-group mb-3 col-lg-8">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Client ID" name="client_id">
+            </div>
+            <div class="input-group mb-3 col-lg-8">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Client Secret" name="client_secret">
+            </div>
+            <div class="input-group mb-3 col-lg-8">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Redirect URI" name="redirect_uri">
+            </div>
+            <div class="input-group mb-3 col-lg-8 d-flex justify-content-center">
+                <button type="button" class="btn btn-primary get_code mr-3"><?php echo __( 'Get Code', 'order_sandbox' ); ?></button>
+                <button type="button" class="btn btn-success get_token"><?php echo __( 'Get Token', 'order_sandbox' ); ?></button>
+            </div>
         </div>
-        <input type="text" class="form-control" placeholder="Name App" name="name_app">
     </div>
-    <div class="input-group mb-3 col-lg-4 mx-auto">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
+    <div class="col-lg-7">
+        <h3 class="col-lg-12 mb-3">Comment history</h3>
+        <div class="content-cmt">
+            <?php 
+                global $wpdb;
+                $mess = $wpdb->get_results("SELECT mess_upload FROM {$wpdb->prefix}mpo_config");
+                foreach($mess as $value){ ?>
+                     <p class="text-success"> - <?php echo $value->mess_upload; ?></p>
+            <?php } ?>
         </div>
-        <input type="text" class="form-control" placeholder="Client ID" name="client_id">
-    </div>
-    <div class="input-group mb-3 col-lg-4 mx-auto">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
-        </div>
-        <input type="text" class="form-control" placeholder="Client Secret" name="client_secret">
-    </div>
-    <div class="input-group mb-3 col-lg-4 mx-auto">
-        <div class="input-group-prepend">
-            <span class="input-group-text">@</span>
-        </div>
-        <input type="text" class="form-control" placeholder="Redirect URI" name="redirect_uri">
-    </div>
-    <div class="input-group mb-3 col-lg-3 d-flex justify-content-between mx-auto">
-        <button type="button" class="btn btn-primary get_code"><?php echo __( 'Get Code', 'order_sandbox' ); ?></button>
-        <button type="button" class="btn btn-success get_token"><?php echo __( 'Get Token', 'order_sandbox' ); ?></button>
     </div>
 </div>
 <div class="container-fluid list_client_id mt-5 table-responsive-xl">
@@ -90,6 +106,8 @@
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="file" name="file_product" id="file_product" accept=".csv">
                                     <input type="hidden" name="access_token" value="<?php echo $value->access_token; ?>">
+                                    <input type="hidden" name="client_id" value="<?php echo $value->client_id; ?>">
+                                    <input type="hidden" name="name_store" value="<?php echo $value->name_app; ?>">
                                 </div>
                             </div>
                             <div class="col-auto my-1">

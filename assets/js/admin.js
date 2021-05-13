@@ -618,21 +618,24 @@ jQuery(document).ready(function($){
         var name_file = jQuery(this).closest('.frmCSVImport').find('input[name="file_product"]').val().replace(/C:\\fakepath\\/i, '');
         var token = jQuery(this).closest('.frmCSVImport').find('input[name="access_token"]').val();
         var action_form = jQuery(this).closest('.frmCSVImport').find('select[name="action_form"]').val();
+        var client_id = jQuery(this).closest('.frmCSVImport').find('input[name="client_id"]').val();
+        var name_store = jQuery(this).closest('.frmCSVImport').find('input[name="name_store"]').val();
+
         jQuery('input[name="file_product"]').parse({
             config: {
                 complete: function(results, file) {
                     var data_csv = results.data;  
                     var newDataLength = 0;
 
-                    run_import( data_csv, newDataLength, name_file, token , action_form );            
+                    run_import( data_csv, newDataLength, name_file, token , action_form , client_id , name_store);            
                 }
             },
         });
     });
 
-    function run_import( data_csv, newDataLength, name_file, token , action_form ) {
+    function run_import( data_csv, newDataLength, name_file, token , action_form , client_id , name_store) {
 
-        var newData = data_csv.slice( newDataLength, newDataLength + 10 );
+        var newData = data_csv.slice( newDataLength, newDataLength + 20);
         var action_ajax = '';
         if(action_form = 'upload_product'){
             action_ajax = 'start_upload_product_merchant';
@@ -648,25 +651,55 @@ jQuery(document).ready(function($){
                 data_csv: JSON.stringify( newData ),
                 name_file : name_file,
                 access_token : token,
-                action_form: action_form,
+                action_form: action_form,       
             },
             success: function( result ){
                 setTimeout(function(){
                     $("#overlay").fadeOut(300);
                 },500);
+                
                 var dataCsv = data_csv;
-                newDataLength = newDataLength + 10;
+                newDataLength = newDataLength + 20;
                 if ( newDataLength <= dataCsv.length ) {
-                    run_import( dataCsv, newDataLength, name_file, token , action_form);
+                    run_import( dataCsv, newDataLength, name_file, token , action_form , client_id , name_store);
                 }else{
+                    var dt = new Date();
+                    var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                    jQuery('.content-cmt').append('<p class="text-success"> - Upload File: '+ name_file + 'by: ' + name_store +' at : ' + time + '</p>');
+                    save_messages(name_file,client_id , name_store);
                     console.log(result);
-
-                    // swal({title:"Success", type: 
-                    //     "success"}).then(function(){ 
-                    //         location.reload(true);
-                    //     }
-                    // );  
+                    setTimeout(function(){
+                        $("#overlay").fadeOut(300);
+                    },500); 
                 }    
+            },
+            error: function(xhr){
+                swal({title: "Error", type: 
+                    "error"}).then(function(){ 
+                        location.reload(true);
+                    });
+                
+                console.log(xhr.status);
+            },
+
+        });
+    }
+
+    function save_messages(name_file , client_id , name_store){
+        jQuery.ajax({
+            url : mo_localize_script.ajaxurl,
+            cache: false,
+            type: "POST",
+            data: {
+                action: 'save_messages_after_upload_product', 
+                name_file : name_file,
+                client_id : client_id,
+                name_store : name_store,
+            },
+            success: function( result ){
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
             },
             error: function(xhr){
                 swal({title: "Error", type: 
@@ -727,49 +760,6 @@ jQuery(document).ready(function($){
         $(this).val($(this).val().trim());
     });
 
-    //remove products
-    // jQuery(document).on('click','.btn.remove_product',function(){
-    //     $(document).ajaxSend(function() {
-    //         $("#overlay").fadeIn(300);　
-    //     });
-    //     var parent_id = jQuery(this).closest('.content-remove').find('input[name="parent_sku"]').val();
-    //     var token = jQuery(this).closest('.content-remove').find('input[name="access_token"]').val();
-    //     jQuery.ajax({
-    //         url : mo_localize_script.ajaxurl,
-    //         type: "post",
-    //         data: {
-    //             action: 'remove_product_mpo',
-    //             parent_id : parent_id,
-    //             token : token,
-    //         },
-    //         success: function(result){ 
-    //             console.log(result);
-    //             var remove_mes = result.data.message;
-    //             if(remove_mes === ""){
-    //                     swal({title: "Success", type: 
-    //                         "success"});
-    //             }else{
-    //                 swal({title: remove_mes , type: 
-    //                     "error"}).then(function(){ 
-    //                         location.reload();
-    //                     }
-    //                 );
-    //             }               
-    //         },
-    //         error: function(xhr){
-    //             swal({title: "Error", type: 
-    //                 "error"}).then(function(){ 
-    //                     location.reload();
-    //                 }
-    //             );
-    //             console.log(xhr.status);
-    //         },
-    //     }).done(function() {
-    //         setTimeout(function(){
-    //           $("#overlay").fadeOut(300);
-    //         },500);
-    //     });
-    // });
 
     //create camp
     jQuery(document).on('click','.create_camp',function(){
