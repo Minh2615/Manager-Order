@@ -665,7 +665,7 @@ jQuery(document).ready(function($){
                 }else{
                     var dt = new Date();
                     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-                    jQuery('.content-cmt').append('<p class="text-success"> - Upload File: '+ name_file + 'by: ' + name_store +' at : ' + time + '</p>');
+                    jQuery('.content-cmt').append('<p class="text-success"> - Upload File: '+ name_file + ' Success by: ' + name_store +' at : ' + time + '</p>');
                     save_messages(name_file,client_id , name_store);
                     console.log(result);
                 }    
