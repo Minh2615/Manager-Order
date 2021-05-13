@@ -508,6 +508,8 @@ class ManagerOrderAjax {
         $name_file = isset($_POST['name_file']) ? $_POST['name_file'] : '';
         $client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
         $name_store = isset($_POST['name_store']) ? $_POST['name_store'] : '';
+        
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
         $now = new DateTime();
         $mess = 'Upload File: '. $name_file .' Success by: '. $name_store . ' at : ' . $now->format('Y-m-d H:i:s');
 

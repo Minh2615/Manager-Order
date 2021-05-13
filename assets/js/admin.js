@@ -668,9 +668,6 @@ jQuery(document).ready(function($){
                     jQuery('.content-cmt').append('<p class="text-success"> - Upload File: '+ name_file + 'by: ' + name_store +' at : ' + time + '</p>');
                     save_messages(name_file,client_id , name_store);
                     console.log(result);
-                    setTimeout(function(){
-                        $("#overlay").fadeOut(300);
-                    },500); 
                 }    
             },
             error: function(xhr){
@@ -697,9 +694,7 @@ jQuery(document).ready(function($){
                 name_store : name_store,
             },
             success: function( result ){
-                setTimeout(function(){
-                    $("#overlay").fadeOut(300);
-                },500);
+                
             },
             error: function(xhr){
                 swal({title: "Error", type: 
